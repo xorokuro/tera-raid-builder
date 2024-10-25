@@ -23,6 +23,7 @@ export type RaidMoveResult= {
     desc: string[];
     flags: string[][];
     causesFlinch: boolean[];
+    statLowered: boolean[];
     isSpread?: boolean;
     warnings?: string[];
 }
@@ -90,6 +91,7 @@ export class RaidMove {
     isBossAction?: boolean;
     flinch?: boolean;
     damaged?: boolean;
+    statLowered?: boolean;
     delayed?: boolean;
     instructed?: boolean;
 
@@ -103,6 +105,7 @@ export class RaidMove {
     _doesNotAffect!: (string | undefined)[];
     _causesFlinch!: boolean[];
     _blockedBy!: (string | undefined)[];
+    _statLowered!: boolean[];
 
     _isSheerForceBoosted?: boolean;
 
@@ -119,7 +122,7 @@ export class RaidMove {
     _flags!: string[][];
     _warnings!: string[];
 
-    constructor(moveData: MoveData, move: Move, raidState: RaidState, userID: number, targetID: number, raiderID: number, movesFirst: boolean,  raidMoveOptions?: RaidMoveOptions, isBossAction?: boolean, flinch?: boolean, damaged?: boolean, instructed?: boolean, delayed?: boolean) {
+    constructor(moveData: MoveData, move: Move, raidState: RaidState, userID: number, targetID: number, raiderID: number, movesFirst: boolean,  raidMoveOptions?: RaidMoveOptions, isBossAction?: boolean, flinch?: boolean, damaged?: boolean, statLowered?: boolean, instructed?: boolean, delayed?: boolean) {
         this.move = move;
         this.moveData = moveData;
         this.raidState = raidState;
@@ -131,6 +134,7 @@ export class RaidMove {
         this.isBossAction = isBossAction || false;
         this.flinch = flinch || false;
         this.damaged = damaged || false;
+        this.statLowered = statLowered || false;
         this.instructed = instructed || false;
         this.delayed = delayed || false;
         this.hits = this.move.category === "Status" ? 0 : Math.max(this.moveData.minHits || 1, Math.min(this.moveData.maxHits || 1, this.options.hits || 1));
@@ -210,6 +214,7 @@ export class RaidMove {
             flags: this._flags,
             causesFlinch: this._causesFlinch,
             isSpread: this._isSpread,
+            statLowered: this._statLowered,
             warnings: this._warnings,
         }
     }
@@ -225,6 +230,7 @@ export class RaidMove {
         this._doesNotAffect = [undefined, undefined, undefined, undefined, undefined];
         this._blockedBy= [undefined, undefined, undefined, undefined, undefined];
         this._causesFlinch = [false, false, false, false, false];
+        this._statLowered = [false, false, false, false, false];
         this._moveType = this.move.type;
         this._damage = [0,0,0,0,0];
         this._damageRolls = [[],[],[],[],[]];
@@ -792,7 +798,7 @@ export class RaidMove {
                 const attackerIgnoresAbility = (this._user.hasAbility("Mold Breaker", "Teravolt", "Turboblaze") && !target.hasItem("Ability Shield")) || (this._user.hasAbility("Mycelium Might") && this.move.category === "Status");
                 let [accuracy, accEffectsList] = (this.instructed && this._user.lastAccuracy) ? [this._user.lastAccuracy, []] : getAccuracy(this.moveData, this.move.category, moveUser, target, !this.movesFirst, attackerIgnoresAbility);
                 this._user.lastAccuracy = accuracy;
-                const bpModifier = getBpModifier(this.moveData, target, this.damaged);
+                const bpModifier = getBpModifier(this.moveData, target, this.damaged, this.statLowered);
                 const accFraction = Math.min(1,accuracy/100);
                 const rollChance = accFraction * (crit ? critChance : (1 - critChance));
                 if (this.options.allowMiss ? (accuracy >= 100 || roll !== "min") : (accuracy > 0)) {
@@ -1165,7 +1171,14 @@ export class RaidMove {
                     }
                     boost[stat] = change;
                 }
-                this._raidState.applyStatChange(id, boost, true, this.userID, (this._user.hasAbility("Mold Breaker", "Teravolt", "Turboblaze") && !pokemon.hasItem("Ability Shield")) || (this._user.hasAbility("Mycelium Might") && this.move.category === "Status"))
+                const diff = this._raidState.applyStatChange(id, boost, true, this.userID, (this._user.hasAbility("Mold Breaker", "Teravolt", "Turboblaze") && !pokemon.hasItem("Ability Shield")) || (this._user.hasAbility("Mycelium Might") && this.move.category === "Status"))
+                // check for stat drops after application
+                for (let stat in diff) {
+                    const statId = stat as StatIDExceptHP;
+                    if (diff[statId] && diff[statId] < 0) {
+                        this._statLowered[id] = true;
+                    }
+                }
             }
         }
     }
