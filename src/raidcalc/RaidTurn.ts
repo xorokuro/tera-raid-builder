@@ -587,6 +587,7 @@ export class RaidTurn {
                             false,
                             false,
                             false,
+                            false,
                             true,
                         );
                         const delayedMoveResult = delayedMove.result();
