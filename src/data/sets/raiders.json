@@ -1574,6 +1574,24 @@
             "moves":["Syrup Bomb","Dragon Cheer","Sweet Scent","Pollen Puff"]
         }
     },
+    "Drifblim": {
+        "Burn Support": {
+            "level":100,
+            "item":"Flame Orb",
+            "ability":"Flare Boost",
+            "nature":"Bold",
+            "evs":{"hp":252,"df":252},
+            "moves":["Fling","Skill Swap","Defog","Helping Hand"]
+        },
+        "Flare Boost DPS": {
+            "level":100,
+            "item":"Flame Orb",
+            "ability":"Flare Boost",
+            "nature":"Modest",
+            "evs":{"hp":252,"sa":252},
+            "moves":["Fling","Calm Mind","Hex","Will-O-Wisp"]
+        }
+    },
     "Dusclops": {
         "Support (Def)": {
             "level":100,
