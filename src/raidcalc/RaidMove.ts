@@ -371,7 +371,7 @@ export class RaidMove {
                 ((this.moveData.flinchChance || 0) > 0) ||
                 (this.moveData.category === "damage+ailment") ||
                 (this.moveData.category === "damage+lower" && Object.values(this.moveData.statChanges!).some((val) => val.change < 0)) ||
-                (this.moveData.category === "damage+raise" && Object.values(this.moveData.statChanges!).some((val) => val.change > 0)) ||
+                (!this.move.named("Scale Shot") && this.moveData.category === "damage+raise" && Object.values(this.moveData.statChanges!).some((val) => val.change > 0)) ||
                 ["Anchor Shot","Ceaseless Edge","Eerie Spell","Genesis Supernova","Secret Power","Sparkling Aria","Spirit Shackle","Stone Axe","Electro Shot"].includes(this.moveData.name)
             )
         );
