@@ -2,7 +2,7 @@ import { Move, Field, StatsTable, calculate} from "../calc";
 import { MoveData, RaidMoveOptions } from "./interface";
 import { RaidState } from "./RaidState";
 import { Raider } from "./Raider";
-import { AbilityName, ItemName, SpeciesName, StatIDExceptHP, StatusName, TypeName } from "../calc/data/interface";
+import { AbilityName, ItemName, MoveName, SpeciesName, StatIDExceptHP, StatusName, TypeName } from "../calc/data/interface";
 import { isGrounded } from "../calc/mechanics/util";
 import { absoluteFloor, isSuperEffective, pokemonIsGrounded, isStatus, getAccuracy, getBpModifier, isRegularMove, isRaidAction, getCritChance } from "./util";
 import { getRollCounts, catRollCounts, combineRollCounts } from "./rolls"
@@ -186,6 +186,12 @@ export class RaidMove {
             // store move data and target
             if (isRegularMove(this.moveData.name)) { // don't store cheers or (No Move) for Instruct/Mimic/Copycat
                 this._user.lastMove = this.moveData;
+                if (this._user.moves.includes("Last Resort" as MoveName)) {
+                    const moveIndex = this._user.moves.findIndex((move) => move === this.moveData.name)
+                    if (moveIndex !== -1) { // will be missing for Mimic/Copycat/Instructed moves
+                        this._user.movesUsed[moveIndex] = true;
+                    }
+                }
                 this._user.lastTarget = this.moveData.target === "user" ? this.userID : this._targetID;
                 this._raidState.lastMovedID = this.userID;
                 // remove Micle boost
@@ -356,7 +362,8 @@ export class RaidMove {
             (this.move.named("Self-Destruct", "Explosion", "Misty Explosion", "Final Gambit", "Healing Wish", "Lunar Dance", "Memento")) || // Moves that cause the user to faint
             (target.isTaunt && this.move.named("Taunt")) ||
             (this._user.field.isGravity && this.move.named("Bounce", "Fly", "Flying Press", "High Jump Kick", "Jump Kick", "Magnet Rise", "Sky Drop", "Splash", "Telekenesis")) ||
-            (this._user.cheersLeft < 1 && this.move.named("Attack Cheer", "Defense Cheer", "Heal Cheer"))
+            (this._user.cheersLeft < 1 && this.move.named("Attack Cheer", "Defense Cheer", "Heal Cheer")) ||
+            (this.move.named("Last Resort") && !this._user.movesUsed.every((m) => m) && this._user.moves.filter((m) => m !== "Last Resort" && m !== "(No Move)").length > 0)
         ) {
             this._desc[this.userID] = this._user.name + " " + this.move.name + " vs. " + this._raidState.getPokemon(this._targetID).name + " — " + this.move.name + " failed!";
             return true;

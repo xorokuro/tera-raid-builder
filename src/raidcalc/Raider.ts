@@ -35,6 +35,8 @@ export class Raider extends Pokemon implements State.Raider {
     lastTarget?: number;        // stored for Instruct and Copycat
     lastAccuracy?: number;      // stored for accuracy of instructed moves
     moveRepeated?: number;      // stored for boost from Metronome, Fury Cutter, etc
+    movesUsed: boolean[];       // stored for Last Resort
+
     teraCharge: number;         // stored for Tera activation
     cheersLeft: number;
 
@@ -95,6 +97,7 @@ export class Raider extends Pokemon implements State.Raider {
         lastTarget: number | undefined = undefined, 
         lastAccuracy: number | undefined = undefined,
         moveRepeated: number | undefined = undefined,
+        movesUsed: boolean[] | undefined = undefined,
         teraCharge: number | undefined = 0, 
         cheersLeft: number = 3,
         choiceLocked: boolean = false,
@@ -145,6 +148,11 @@ export class Raider extends Pokemon implements State.Raider {
         this.lastMove = lastMove;
         this.lastTarget = lastTarget;
         this.lastAccuracy = lastAccuracy;
+        this.movesUsed = movesUsed || (
+            pokemon.moves.filter(m => m !== "Last Resort" && m !== "(No Move)").length > 0 ?
+                pokemon.moves.map(m => m === "Last Resort" || m === "(No Move)") :
+                Array(pokemon.moves.length).fill(false)
+        );
         this.moveRepeated = moveRepeated;
         this.teraCharge = teraCharge;
         this.cheersLeft = cheersLeft;
@@ -245,6 +253,7 @@ export class Raider extends Pokemon implements State.Raider {
             this.lastTarget,
             this.lastAccuracy,
             this.moveRepeated,
+            this.movesUsed.slice(),
             this.teraCharge,
             this.cheersLeft,
             this.isChoiceLocked,
