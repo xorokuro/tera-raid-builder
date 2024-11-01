@@ -1,4 +1,8 @@
 {
+    "Feraligatr": {
+        "Latr, Feraligatr!": "feraligatr/main",
+        "Latr, Feraligatr! (3-person version)": "feraligatr/latr_gatr_3"
+    },
     "Infernape": {
         "Rock All Night": "infernape/main",
         "Rock All Night (3-person version)": "infernape/rock_all_night_3",
