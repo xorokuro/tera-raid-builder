@@ -1896,13 +1896,13 @@ function BossBuildControls({moveSet, pokemon, setPokemon, allMoves, prettyMode, 
         }
     }
 
-    const setHPMultiplier = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let val = parseInt(e.target.value);
-        if (val < 1) val = 1;
-        const newPokemon = pokemon.clone();
-        newPokemon.bossMultiplier = val;
-        setPokemon(newPokemon.clone())        
-    }
+    // const setHPMultiplier = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     let val = parseInt(e.target.value);
+    //     if (val < 1) val = 1;
+    //     const newPokemon = pokemon.clone();
+    //     newPokemon.bossMultiplier = val;
+    //     setPokemon(newPokemon.clone())        
+    // }
 
     const setBMove = (index: number) => async (move: MoveName) => {
         const newPoke = pokemon.clone();
@@ -2018,7 +2018,7 @@ function BossBuildControls({moveSet, pokemon, setPokemon, allMoves, prettyMode, 
                                             }}
                                             fullWidth={false}
                                             value={pokemon.bossMultiplier}
-                                            onChange={setHPMultiplier}
+                                            onChange={(e) => setPokemonProperty("bossMultiplier")(parseInt(e.target.value))}
                                             sx = {{ width: '30%'}}
                                         />
                                     }
