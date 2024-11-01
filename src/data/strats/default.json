@@ -5,12 +5,12 @@
     "pokemon": [
         {
             "id": 0,
-            "role": "Infernape",
-            "name": "Infernape",
+            "role": "Feraligatr",
+            "name": "Feraligatr",
             "shiny": false,
             "isAnyLevel": false,
-            "ability": "Iron Fist",
-            "nature": "Naughty",
+            "ability": "Sheer Force",
+            "nature": "Adamant",
             "evs": {
                 "hp": 0,
                 "atk": 0,
@@ -28,24 +28,24 @@
                 "spe": 31
             },
             "level": 100,
-            "gender": "M",
-            "teraType": "Rock",
+            "gender": "N",
+            "teraType": "Dark",
             "moves": [
-                "Flare Blitz",
-                "Aura Sphere",
-                "Tera Blast",
-                "Grass Knot"
+                "Crunch",
+                "Liquidation",
+                "Psychic Fangs",
+                "Ice Punch"
             ],
             "bossMultiplier": 3500,
             "extraMoves": [
-                "Nasty Plot",
                 "Swords Dance",
-                "Focus Energy"
+                "Earthquake",
+                "Dragon Dance"
             ],
             "shieldData": {
-                "hpTrigger": 80,
-                "timeTrigger": 80,
-                "shieldCancelDamage": 50,
+                "hpTrigger": 75,
+                "timeTrigger": 75,
+                "shieldCancelDamage": 45,
                 "shieldDamageRate": 20,
                 "shieldDamageRateTera": 70,
                 "shieldDamageRateTeraChange": 30
@@ -53,103 +53,74 @@
         },
         {
             "id": 1,
-            "role": "Kommo-o",
-            "name": "Kommo-o",
+            "role": "NPC",
+            "name": "NPC",
             "shiny": false,
-            "isAnyLevel": false,
-            "ability": "Bulletproof",
-            "item": "Covert Cloak",
-            "nature": "Adamant",
+            "isAnyLevel": true,
+            "ability": "(No Ability)",
+            "nature": "Hardy",
             "evs": {
-                "hp": 252,
-                "atk": 252,
+                "hp": 0,
+                "atk": 0,
                 "def": 0,
                 "spa": 0,
                 "spd": 0,
                 "spe": 0
             },
             "ivs": {
-                "hp": 31,
-                "atk": 31,
-                "def": 31,
-                "spa": 31,
-                "spd": 31,
-                "spe": 31
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
             },
-            "level": 100,
+            "level": 1,
             "gender": "N",
-            "moves": [
-                "Belly Drum",
-                "Close Combat",
-                "Swords Dance",
-                "Drain Punch"
-            ],
+            "moves": [],
             "bossMultiplier": 100,
-            "extraMoves": [],
-            "shieldData": {
-                "hpTrigger": 0,
-                "timeTrigger": 0,
-                "shieldCancelDamage": 0,
-                "shieldDamageRate": 0,
-                "shieldDamageRateTera": 0,
-                "shieldDamageRateTeraChange": 0
-            }
+            "extraMoves": []
         },
         {
             "id": 2,
-            "role": "Clefairy",
-            "name": "Clefairy",
+            "role": "NPC",
+            "name": "NPC",
             "shiny": false,
-            "isAnyLevel": false,
-            "ability": "Friend Guard",
-            "item": "Eviolite",
-            "nature": "Bold",
+            "isAnyLevel": true,
+            "ability": "(No Ability)",
+            "nature": "Hardy",
             "evs": {
-                "hp": 252,
+                "hp": 0,
                 "atk": 0,
-                "def": 252,
+                "def": 0,
                 "spa": 0,
                 "spd": 0,
                 "spe": 0
             },
             "ivs": {
-                "hp": 31,
-                "atk": 31,
-                "def": 31,
-                "spa": 31,
-                "spd": 31,
-                "spe": 31
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
             },
-            "level": 100,
+            "level": 1,
             "gender": "N",
-            "moves": [
-                "Helping Hand",
-                "Heal Pulse",
-                "Chilling Water",
-                "Rain Dance"
-            ],
+            "moves": [],
             "bossMultiplier": 100,
-            "extraMoves": [],
-            "shieldData": {
-                "hpTrigger": 0,
-                "timeTrigger": 0,
-                "shieldCancelDamage": 0,
-                "shieldDamageRate": 0,
-                "shieldDamageRateTera": 0,
-                "shieldDamageRateTeraChange": 0
-            }
+            "extraMoves": []
         },
         {
             "id": 3,
-            "role": "Umbreon",
-            "name": "Umbreon",
+            "role": "NPC",
+            "name": "NPC",
             "shiny": false,
-            "isAnyLevel": false,
+            "isAnyLevel": true,
             "ability": "(No Ability)",
-            "item": "Zoom Lens",
-            "nature": "Sassy",
+            "nature": "Hardy",
             "evs": {
-                "hp": 252,
+                "hp": 0,
                 "atk": 0,
                 "def": 0,
                 "spa": 0,
@@ -157,43 +128,29 @@
                 "spe": 0
             },
             "ivs": {
-                "hp": 31,
-                "atk": 31,
-                "def": 31,
-                "spa": 31,
-                "spd": 31,
-                "spe": 31
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
             },
-            "level": 100,
+            "level": 1,
             "gender": "N",
-            "moves": [
-                "Screech",
-                "Helping Hand",
-                "Snarl",
-                "Rain Dance"
-            ],
+            "moves": [],
             "bossMultiplier": 100,
-            "extraMoves": [],
-            "shieldData": {
-                "hpTrigger": 0,
-                "timeTrigger": 0,
-                "shieldCancelDamage": 0,
-                "shieldDamageRate": 0,
-                "shieldDamageRateTera": 0,
-                "shieldDamageRateTeraChange": 0
-            }
+            "extraMoves": []
         },
         {
             "id": 4,
-            "role": "Umbreon",
-            "name": "Umbreon",
+            "role": "NPC",
+            "name": "NPC",
             "shiny": false,
-            "isAnyLevel": false,
+            "isAnyLevel": true,
             "ability": "(No Ability)",
-            "item": "Zoom Lens",
-            "nature": "Sassy",
+            "nature": "Hardy",
             "evs": {
-                "hp": 252,
+                "hp": 0,
                 "atk": 0,
                 "def": 0,
                 "spa": 0,
@@ -201,31 +158,18 @@
                 "spe": 0
             },
             "ivs": {
-                "hp": 31,
-                "atk": 31,
-                "def": 31,
-                "spa": 31,
-                "spd": 31,
-                "spe": 31
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
             },
-            "level": 100,
+            "level": 1,
             "gender": "N",
-            "moves": [
-                "Screech",
-                "Helping Hand",
-                "Snarl",
-                "Rain Dance"
-            ],
+            "moves": [],
             "bossMultiplier": 100,
-            "extraMoves": [],
-            "shieldData": {
-                "hpTrigger": 0,
-                "timeTrigger": 0,
-                "shieldCancelDamage": 0,
-                "shieldDamageRate": 0,
-                "shieldDamageRateTera": 0,
-                "shieldDamageRateTeraChange": 0
-            }
+            "extraMoves": []
         }
     ],
     "turns": [
@@ -235,7 +179,7 @@
             "moveInfo": {
                 "name": "(No Move)",
                 "userID": 1,
-                "targetID": 0,
+                "targetID": 1,
                 "options": {
                     "crit": false,
                     "secondaryEffects": false,
