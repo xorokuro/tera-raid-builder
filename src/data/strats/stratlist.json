@@ -1,7 +1,8 @@
 {
     "Feraligatr": {
         "Latr, Feraligatr!": "feraligatr/main",
-        "Latr, Feraligatr! (3-person version)": "feraligatr/latr_gatr_3"
+        "Latr, Feraligatr! (3-person version)": "feraligatr/latr_gatr_3",
+        "Medicham T1": "feraligatr/medicham"
     },
     "Infernape": {
         "Rock All Night": "infernape/main",
