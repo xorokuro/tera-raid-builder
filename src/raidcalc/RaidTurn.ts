@@ -7,7 +7,7 @@ import pranksterMoves from "../data/prankster_moves.json";
 import triageMoves from "../data/triage_moves.json";
 import chargeMoves from "../data/charge_moves.json";
 import { MoveName, SpeciesName, StatusName } from "../calc/data/interface";
-import { absoluteFloor, getSelectableMoves, isRegularMove } from "./util";
+import { absoluteFloor, getSelectableMoves, isRegularMove, rankBySpeed } from "./util";
 import { getEndOfTurn } from "../calc/desc";
 
 const gen = Generations.get(9);
@@ -769,7 +769,7 @@ export class RaidTurn {
     }
 
     private applyEndOfTurnStatusEffects() {
-        for (let pokemon of this._raidState.raiders) {
+        for (let pokemon of rankBySpeed(this._raidState.raiders)) {
             // Move-selection-related countdowns (TO DO: check if these are turn-based or not)
             if (pokemon.isDisable) { pokemon.isDisable--; }
             if (!pokemon.isDisable && pokemon.disabledMove) { pokemon.disabledMove = undefined; }
@@ -786,7 +786,7 @@ export class RaidTurn {
     private countDownAbilityNullification() {
         // count down nullified ability counter
         // const pokemon = this._raidState.getPokemon(this.raiderID);
-        for (let pokemon of this._raidState.raiders) {
+        for (let pokemon of rankBySpeed(this._raidState.raiders)) {
         if (pokemon.abilityNullified) {
             pokemon.abilityNullified!--;
             let abilityRestored = false;

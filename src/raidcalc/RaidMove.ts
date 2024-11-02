@@ -4,7 +4,7 @@ import { RaidState } from "./RaidState";
 import { Raider } from "./Raider";
 import { AbilityName, ItemName, MoveName, SpeciesName, StatIDExceptHP, StatusName, TypeName } from "../calc/data/interface";
 import { isGrounded } from "../calc/mechanics/util";
-import { absoluteFloor, isSuperEffective, pokemonIsGrounded, isStatus, getAccuracy, getBpModifier, isRegularMove, isRaidAction, getCritChance } from "./util";
+import { absoluteFloor, isSuperEffective, pokemonIsGrounded, isStatus, getAccuracy, getBpModifier, isRegularMove, isRaidAction, getCritChance, getSpeedRanking } from "./util";
 import { getRollCounts, catRollCounts, combineRollCounts } from "./rolls"
 import persistentAbilities from "../data/persistent_abilities.json"
 import bypassProtectMoves from "../data/bypass_protect_moves.json"
@@ -704,12 +704,12 @@ export class RaidMove {
                 continue;
             }
         }
-        for (let dne of this._doesNotAffect)  {
-            if (dne) {
-                // this._user.lastMoveFailed = true;
-                break;
-            }
-        }
+        // for (let dne of this._doesNotAffect)  {
+        //     if (dne) {
+        //         // this._user.lastMoveFailed = true;
+        //         break;
+        //     }
+        // }
     }
 
     private checkProtection() {
@@ -787,7 +787,7 @@ export class RaidMove {
         }
         // calculate and apply damage
         let hasCausedDamage = false;
-        for (let id of [0,1,2,3,4]) {
+        for (let id of getSpeedRanking([0,1,2,3,4], this._raidState.raiders)) {
             const target = this.getPokemon(id);
             if (this._doesNotAffect[id]) {
                 this._desc[id] = this.move.name + " " + this._doesNotAffect[id] + "!";
@@ -1064,7 +1064,7 @@ export class RaidMove {
             // scripted Matcha Gotcha could potentially drain from multiple raiders
             let drainRolls: Map<number,number> | undefined = undefined;
             if (damage > 0) {
-                for (let id of this._affectedIDs) {
+                for (let id of getSpeedRanking(this._affectedIDs, this._raidState.raiders)) {
                     this._drain[this.userID] = this._drain[this.userID] + absoluteFloor(this._damage[id] * drainPercent/100);
                     for (let hitRolls of this._damageRolls[id]) {
                         const scaledRolls = new Map<number,number>();
@@ -1120,7 +1120,7 @@ export class RaidMove {
                 this._healing[id] += healAmount;
             }
         }
-        for (let id=1; id<5; id++) {
+        for (let id of getSpeedRanking(this._affectedIDs, this._raidState.raiders)) {
             if (this._healing[id] && this.getPokemon(id).originalCurHP > 0) {
                 this._raidState.applyDamage(id, -this._healing[id], healingRolls[id] ? getRollCounts([healingRolls[id] as number[]], -this._raidState.raiders[id].maxHP(), this._raidState.raiders[id].maxHP()) : undefined);
             }
@@ -1156,7 +1156,7 @@ export class RaidMove {
         if (this.move.name === "Curse" && this._raiders[this.userID].hasType("Ghost")) { return; } // no stat changes
         const chance = (this.moveData.statChance || 100) * (this._raiders[this.userID].hasAbility("Serene Grace") ? 2 : 1);
         if (chance && (this.options.secondaryEffects || chance >= 100 )) {
-            for (let id of affectedIDs) {
+            for (let id of getSpeedRanking(affectedIDs, this._raidState.raiders)) {
                 if (this._doesNotAffect[id] || this._blockedBy[id]) { continue; }
                 const pokemon = this.getPokemon(id);
                 if (pokemon.originalCurHP === 0) { continue; }
@@ -1194,7 +1194,7 @@ export class RaidMove {
         const ailment = this.moveData.ailment;
         const chance = (this.moveData.ailmentChance || 100) * (this._user.hasAbility("Serene Grace") ? 2 : 1);
         if (ailment && !this._isSheerForceBoosted && (chance >= 100 || this.options.secondaryEffects)) {
-            for (let id of this._affectedIDs) {
+            for (let id of getSpeedRanking(this._affectedIDs, this._raidState.raiders)) {
                 if (this._doesNotAffect[id] || this._blockedBy[id]) { continue; }
                 const pokemon = this.getPokemon(id);
                 if (pokemon.originalCurHP === 0) { continue; }
@@ -1540,7 +1540,7 @@ export class RaidMove {
                 ) {           
                     this._raidState.changeAbility(this.userID, target_ability);
                     if (this.userID !== 0) {
-                        for (let i=1; i<5; i++) {
+                        for (let i of getSpeedRanking([1,2,3,4], this._raidState.raiders)) {
                             const pokemon = this.getPokemon(i);
                             if (i !== this.userID &&
                                 !pokemon.hasItem("Ability Shield") &&
@@ -1675,8 +1675,7 @@ export class RaidMove {
                 }
                 break;
             case "Haze":
-                for (let id=0; id<5; id++) {
-                    const pokemon = this.getPokemon(id);
+                for (let pokemon of this._raidState.raidersBySpeed) {
                     for (let stat in pokemon.boosts) {
                         const statId = stat as StatIDExceptHP
                         pokemon.boosts[statId] = 0;
@@ -1685,7 +1684,7 @@ export class RaidMove {
                 break;
             case "Heal Bell":
             case "Jungle Healing":
-                for (let id of this._affectedIDs) {
+                for (let id of getSpeedRanking(this._affectedIDs, this._raidState.raiders)) {
                     if (!this._doesNotAffect[id]) {
                         const pokemon = this._raidState.getPokemon(id);
                         pokemon.status = "";
@@ -1781,7 +1780,7 @@ export class RaidMove {
                 break;
             case "Dragon Cheer": 
                 const allyIDs = this.userID !== 0 ? [1,2,3,4].filter((id) => id !== this.userID) : [];
-                for (let allyID of allyIDs) {
+                for (let allyID of getSpeedRanking(allyIDs, this._raidState.raiders)) {
                     const ally = this._raidState.getPokemon(allyID);
                     if (!ally.isPumped) {
                         ally.isPumped = ally.hasType("Dragon") ? 2: 1;
@@ -1799,7 +1798,7 @@ export class RaidMove {
             case "Tailwind":
                 // Tailwind is applied in applyFieldChanges()
                 const allies = this.userID !== 0 ? [1,2,3,4] : [0];
-                for (let id of allies) {
+                for (let id of getSpeedRanking(allies, this._raidState.raiders)) {
                     const ally = this.getPokemon(id);
                     if (ally.hasAbility("Wind Power")) {
                         this._fields[id].attackerSide.isCharged = true;

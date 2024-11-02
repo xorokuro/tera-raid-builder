@@ -4,7 +4,7 @@ import { getModifiedStat, getQPBoostedStat } from "../calc/mechanics/util";
 import * as State from "./interface";
 import { AbilityName, ItemName, SpeciesName, StatIDExceptHP, StatusName, Terrain, TypeName, Weather } from "../calc/data/interface";
 import persistentAbilities from "../data/persistent_abilities.json"
-import { hasNoStatus, pokemonIsGrounded } from "./util";
+import { getSpeedRanking, hasNoStatus, pokemonIsGrounded, rankBySpeed } from "./util";
 import { CumulativeRolls } from "./rolls";
 
 const gen = Generations.get(9);
@@ -27,6 +27,10 @@ export class RaidState implements State.RaidState{
 
     public get fields(): Field[] {
         return this.raiders.map(raider => raider.field);
+    }
+
+    public get raidersBySpeed(): Raider[] {
+        return [...this.raiders].sort((a, b) => b.effectiveSpeed - a.effectiveSpeed);
     }
 
     public getPokemon(id: number): Raider {
@@ -538,7 +542,7 @@ export class RaidState implements State.RaidState{
         // Mirror Herb and Opportunist
         if (copyable) { // Stat changes that are being copied shouldn't be copied in turn
             const opponentIds = id === 0 ? [1,2,3,4] : [0];
-            for (const opponentId of opponentIds) {
+            for (const opponentId of getSpeedRanking(opponentIds, this.raiders)) {
                 const opponent = this.getPokemon(opponentId);
                 const mirrorHerb = opponent.item === "Mirror Herb";
                 const opportunist = opponent.hasAbility("Opportunist");
@@ -757,7 +761,7 @@ export class RaidState implements State.RaidState{
 
     public applyTerrain(terrain: Terrain | "Teraform Zero" | undefined, turns: number = 5, ids: number[] = [0,1,2,3,4]) {
         const setTeraformZero = terrain === "Teraform Zero";
-        for (let id of ids) {
+        for (let id of getSpeedRanking(ids, this.raiders)) {
             const pokemon = this.getPokemon(id);
             if (setTeraformZero) {
                 pokemon.field.isTeraformZero = true;
@@ -789,7 +793,7 @@ export class RaidState implements State.RaidState{
 
     public applyWeather(weather: Weather | "Cloud Nine" | undefined, turns = 5, ids: number[] = [0,1,2,3,4]) {
         const setCloudNine = weather === "Cloud Nine";
-        for (let id of ids) {
+        for (let id of getSpeedRanking(ids, this.raiders)) {
             const pokemon = this.getPokemon(id);
             if (setCloudNine) {
                 pokemon.field.isCloudNine = true;
@@ -877,7 +881,7 @@ export class RaidState implements State.RaidState{
         /// Trace (handled separately so the traced ability can activate if applicable)
         if (ability === "Trace") {
             const opponentIds = id === 0 ? [1,2,3,4] : [0];
-            for (let oid of opponentIds) { // Trace might be random for bosses, but we'll check abilities in order
+            for (let oid of getSpeedRanking(opponentIds, this.raiders)) { // Trace might be random for bosses, but we'll check abilities in order
                 const copiedAbility = this.raiders[oid].ability;
                 if (copiedAbility && !this.raiders[oid].abilityNullified && !persistentAbilities["NoTrace"].includes(copiedAbility)) {
                     pokemon.ability = copiedAbility;
@@ -984,7 +988,7 @@ export class RaidState implements State.RaidState{
             /// others
             case "Supersweet Syrup":
                 const affectedSSPokemon = id === 0 ? this.raiders.slice(1) : [this.raiders[0]];
-                for (let opponent of affectedSSPokemon) {
+                for (let opponent of rankBySpeed(affectedSSPokemon)) {
                     const origEva = opponent.boosts.eva || 0;
                     this.applyStatChange(opponent.id, {eva: -1}, true, id);
                     flags[opponent.id].push("Eva: " + origEva + " → " + opponent.boosts.eva + " (Supersweet Syrup)");
@@ -993,7 +997,7 @@ export class RaidState implements State.RaidState{
             case "Hospitality":
                 if (id !== 0) {
                     const allies = this.raiders.slice(1).splice(id-1, 1);
-                    for (let ally of allies) {
+                    for (let ally of rankBySpeed(allies)) {
                         const healing = Math.floor(ally.maxHP() / 4);
                         this.applyDamage(ally.id, -healing)
                     }
@@ -1049,7 +1053,7 @@ export class RaidState implements State.RaidState{
                 break;
             case "Intimidate":
                 const affectedPokemon = id === 0 ? this.raiders.slice(1) : [this.raiders[0]];
-                for (let opponent of affectedPokemon) {
+                for (let opponent of rankBySpeed(affectedPokemon)) {
                     if (opponent.hasAbility("Guard Dog")) {
                         const origAtk = opponent.boosts.atk ||  0;
                         this.applyStatChange(opponent.id, {atk: 1}, true, id);
@@ -1075,7 +1079,7 @@ export class RaidState implements State.RaidState{
         /// Other Field-Related Abilities
         switch (ability) {
             case "Neutralizing Gas":
-                for (let i = 0; i < 5; i++) {
+                for (let i of getSpeedRanking([0,1,2,3,4], this.raiders)) {
                     if (i !== id ) {
                         const target = this.raiders[i];
                         const targetAbility = this.raiders[i].ability;
@@ -1203,7 +1207,7 @@ export class RaidState implements State.RaidState{
                     .filter(r => r.id !== id && r.originalCurHP !== 0)
                     .map(r => r.ability).includes("Neutralizing Gas" as AbilityName)
                 ) {
-                    for (let i = 0; i < 5; i++) {
+                    for (let i of getSpeedRanking([0,1,2,3,4], this.raiders)) {
                         if (i !== id ) {
                             const target = this.raiders[i];
                             if ((target.abilityNullified || 0) < 0 && target.originalAbility !== "(No Ability)") {
@@ -1408,8 +1412,8 @@ export class RaidState implements State.RaidState{
         let pokemon = this.getPokemon(id);
         const ability = pokemon.ability;
         // check Receiver / Power of Alchemy
-        for (let i=1; i<5; i++) {
-            if (i === id) { continue; }
+        for (let i of getSpeedRanking([1,2,3,4], this.raiders)) {
+            if (i === 0 || i === id) { continue; }
             const ally = this.getPokemon(i);
             if (ally.hasAbility("Receiver","Power of Alchemy","Power Of Alchemy") && ally.originalCurHP !== 0) {
                 if (ability && !persistentAbilities["NoReceiver"].includes(ability)) {
@@ -1418,7 +1422,7 @@ export class RaidState implements State.RaidState{
             }
         }
         // check Soul-Heart
-        for (let i=0; i<5; i++) {
+        for (let i of getSpeedRanking([0,1,2,3,4], this.raiders)) {
             if (i === id) { continue; }
             const poke = this.getPokemon(i);
             if (poke.hasAbility("Soul-Heart") && poke.originalCurHP !== 0) {

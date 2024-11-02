@@ -332,6 +332,14 @@ export function modifyPokemonSpeedByField(speed: number, field: Field, ability?:
     return speed;
 }
 
+export function rankBySpeed(pokemon: Raider[]) {
+    return [...pokemon].sort((a, b) => getModifiedSpeed(b) - getModifiedSpeed(a));
+}
+
+export function getSpeedRanking(indices: number[], pokemon: Raider[]) {
+    return [...indices].sort((a, b) => getModifiedSpeed(pokemon[b]) - getModifiedSpeed(pokemon[a]));
+}
+
 // no idea if this should go here
 export function getGroupedTurnIDs(turns: RaidTurnInfo[]) {
     const displayGroups: number[][] = [];
