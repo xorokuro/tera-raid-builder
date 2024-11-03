@@ -183,7 +183,7 @@
             "id": 4,
             "role": "Meowth",
             "name": "Meowth-Alola",
-            "shiny": false,
+            "shiny": true,
             "isAnyLevel": false,
             "ability": "(No Ability)",
             "item": "Eviolite",
