@@ -2,7 +2,20 @@
     "Feraligatr": {
         "Latr, Feraligatr!": "feraligatr/main",
         "Latr, Feraligatr! (3-person version)": "feraligatr/latr_gatr_3",
-        "Medicham T1": "feraligatr/medicham"
+        "Koraidon T1": "feraligatr/koraidon",
+        "Anger Point T1": "feraligatr/anger_point",
+        "Medicham T1": "feraligatr/medicham",
+        "Collision Course: Express Route": "feraligatr/collision_course",
+        "Passimian T1": "feraligatr/passimian",
+        "Team Eeveelutions Sends the Gator Back to the Swamp!": "feraligatr/eeveelutions",
+        "Sylveon Bears Fangs": "feraligatr/sylveon_bares_fangs",
+        "Godzilla": "feraligatr/godzilla",
+        "A Pirouette-style Takedown!": "feraligatr/pirouette",
+        "ThirtySixTales - Fire & Ice": "feraligatr/thirtysixtales",
+        "ThirtySixTales": "feraligatr/thirtysixtales2",
+        "Mythicals": "feraligatr/mythicals",
+        "Nukebro": "feraligatr/nukebro",
+        "Little Dark Age": "feraligatr/little_dark_age"
     },
     "Infernape": {
         "Rock All Night": "infernape/main",
