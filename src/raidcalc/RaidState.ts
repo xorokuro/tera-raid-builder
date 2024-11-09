@@ -1076,13 +1076,24 @@ export class RaidState implements State.RaidState{
                 }
             case "Costar":
                 if (id !== 0) {
-                    const copyFrom = this.getPokemon(id === 4 ? 1 : id + 1);
-                    for (let stat of ["atk", "def", "spa", "spd", "spe", "acc", "eva"]) {
-                        const statId = stat as StatIDExceptHP;
-                        pokemon.boosts[statId] = copyFrom.boosts[statId] || 0;
+                    let copyFromId = -1;
+                    for (let i=1; i<3; i++) {
+                        let testID = id + i;
+                        if (testID > 4) { testID -= 4; }
+                        if (this.raiders[testID].originalCurHP > 0) {
+                            copyFromId = testID;
+                            break;
+                        }
                     }
-                    pokemon.isPumped = copyFrom.isPumped;
-                    this.applyStatChange(id, {}, false, id, false);
+                    if (copyFromId !== -1) {
+                        const copyFrom = this.getPokemon(id === 4 ? 1 : id + 1);
+                        for (let stat of ["atk", "def", "spa", "spd", "spe", "acc", "eva"]) {
+                            const statId = stat as StatIDExceptHP;
+                            pokemon.boosts[statId] = copyFrom.boosts[statId] || 0;
+                        }
+                        pokemon.isPumped = copyFrom.isPumped;
+                        this.applyStatChange(id, {}, false, id, false);
+                    }
                 }
                 break;
             }
