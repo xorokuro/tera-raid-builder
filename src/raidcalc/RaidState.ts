@@ -1205,7 +1205,7 @@ export class RaidState implements State.RaidState{
                         }
                     }
                     if (copyFromId !== -1) {
-                        const copyFrom = this.getPokemon(id === 4 ? 1 : id + 1);
+                        const copyFrom = this.getPokemon(copyFromId);
                         for (let stat of ["atk", "def", "spa", "spd", "spe", "acc", "eva"]) {
                             const statId = stat as StatIDExceptHP;
                             pokemon.boosts[statId] = copyFrom.boosts[statId] || 0;
@@ -1437,6 +1437,7 @@ export class RaidState implements State.RaidState{
     public faint(id: number) {
         let pokemon = this.getPokemon(id);
         const ability = pokemon.ability;
+        console.log("Fainted: " + id);
         // check Receiver / Power of Alchemy
         for (let i of getSpeedRanking([1,2,3,4], this.raiders)) {
             if (i === 0 || i === id) { continue; }
