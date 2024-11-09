@@ -1074,6 +1074,17 @@ export class RaidState implements State.RaidState{
                         flags[opponent.id][flags[opponent.id].length-1] += ", Spe: " + origSpe + " → " + opponent.boosts.spe + " (Rattled)";
                     }
                 }
+            case "Costar":
+                if (id !== 0) {
+                    const copyFrom = this.getPokemon(id === 4 ? 1 : id + 1);
+                    for (let stat of ["atk", "def", "spa", "spd", "spe", "acc", "eva"]) {
+                        const statId = stat as StatIDExceptHP;
+                        pokemon.boosts[statId] = copyFrom.boosts[statId] || 0;
+                    }
+                    pokemon.isPumped = copyFrom.isPumped;
+                    this.applyStatChange(id, {}, false, id, false);
+                }
+                break;
             }
         }
         /// Other Field-Related Abilities
@@ -1417,7 +1428,7 @@ export class RaidState implements State.RaidState{
             const ally = this.getPokemon(i);
             if (ally.hasAbility("Receiver","Power of Alchemy","Power Of Alchemy") && ally.originalCurHP !== 0) {
                 if (ability && !persistentAbilities["NoReceiver"].includes(ability)) {
-                    ally.ability = ability;
+                    this.changeAbility(i, ability, false);
                 }
             }
         }

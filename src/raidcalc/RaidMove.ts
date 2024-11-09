@@ -1709,8 +1709,8 @@ export class RaidMove {
                 for (let stat of ["atk", "def", "spa", "spd", "spe", "acc", "eva"]) {
                     const statId = stat as StatIDExceptHP;
                     this._user.boosts[statId] = target.boosts[statId] || 0;
-                    this._user.isPumped = target.isPumped;
                 }
+                this._user.isPumped = target.isPumped;
                 this._raidState.applyStatChange(this.userID, {}, false, this.userID, false);
                 break;
             case "Power Swap":
