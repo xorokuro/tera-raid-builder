@@ -281,6 +281,7 @@ export class RaidState implements State.RaidState{
             case "Chesto Berry":
                 if (pokemon.status === "slp") { 
                     pokemon.status = "";
+                    pokemon.isSleep = 0;
                     pokemon.lastConsumedItem = item as ItemName; 
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
@@ -302,6 +303,7 @@ export class RaidState implements State.RaidState{
             case "Aspear Berry":
                 if (pokemon.status === "frz") { 
                     pokemon.status = "";
+                    pokemon.isFrozen = 0;
                     pokemon.lastConsumedItem = item as ItemName; 
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
@@ -309,6 +311,8 @@ export class RaidState implements State.RaidState{
             case "Lum Berry":
                 if (pokemon.status !== "") { 
                     pokemon.status = "";
+                    pokemon.isFrozen = 0;
+                    pokemon.isSleep = 0;
                     pokemon.lastConsumedItem = item as ItemName; 
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
@@ -1074,28 +1078,6 @@ export class RaidState implements State.RaidState{
                         flags[opponent.id][flags[opponent.id].length-1] += ", Spe: " + origSpe + " → " + opponent.boosts.spe + " (Rattled)";
                     }
                 }
-            case "Costar":
-                if (id !== 0) {
-                    let copyFromId = -1;
-                    for (let i=1; i<3; i++) {
-                        let testID = id + i;
-                        if (testID > 4) { testID -= 4; }
-                        if (this.raiders[testID].originalCurHP > 0) {
-                            copyFromId = testID;
-                            break;
-                        }
-                    }
-                    if (copyFromId !== -1) {
-                        const copyFrom = this.getPokemon(id === 4 ? 1 : id + 1);
-                        for (let stat of ["atk", "def", "spa", "spd", "spe", "acc", "eva"]) {
-                            const statId = stat as StatIDExceptHP;
-                            pokemon.boosts[statId] = copyFrom.boosts[statId] || 0;
-                        }
-                        pokemon.isPumped = copyFrom.isPumped;
-                        this.applyStatChange(id, {}, false, id, false);
-                    }
-                }
-                break;
             }
         }
         /// Other Field-Related Abilities
@@ -1208,6 +1190,28 @@ export class RaidState implements State.RaidState{
                         pokemon.abilityOn = true;
                         ally.abilityOn = true;
                         flags[id].push(ability + " activated");
+                    }
+                }
+                break;
+            case "Costar":
+                if (id !== 0) {
+                    let copyFromId = -1;
+                    for (let i=1; i<3; i++) {
+                        let testID = id + i;
+                        if (testID > 4) { testID -= 4; }
+                        if (this.raiders[testID].originalCurHP > 0) {
+                            copyFromId = testID;
+                            break;
+                        }
+                    }
+                    if (copyFromId !== -1) {
+                        const copyFrom = this.getPokemon(id === 4 ? 1 : id + 1);
+                        for (let stat of ["atk", "def", "spa", "spd", "spe", "acc", "eva"]) {
+                            const statId = stat as StatIDExceptHP;
+                            pokemon.boosts[statId] = copyFrom.boosts[statId] || 0;
+                        }
+                        pokemon.isPumped = copyFrom.isPumped;
+                        this.applyStatChange(id, {}, false, id, false);
                     }
                 }
                 break;
