@@ -11,6 +11,7 @@ import { deserialize } from './utilities/shrinkstring';
 import { TextEncoder, TextDecoder } from 'util';
 
 import STRAT_LIST from './data/strats/stratlist.json';
+import { optimizeBossMoves } from './raidcalc/optmoves';
 
 const IGNORED_STRATS = [ // strats that fail, mostly for known reasons
   'mewtwo/main',
@@ -20,9 +21,6 @@ const IGNORED_STRATS = [ // strats that fail, mostly for known reasons
   'blastoise/double_trouble',
   'meganium/chandelier',
   'meganium/smashing_success',
-  'infernape/passimian',  // Todo: investigate this test-only failure
-  'feraligatr/passimian', // Todo: another test-only failure
-  'feraligatr/costar',    // Todo: yet another test-only failure
 ]
 
 const MAIN_STRATS = [ // manually include ones that aren't named "main"
@@ -67,8 +65,14 @@ async function resultsFromLightBuild(strategy: LightBuildInfo) {
     startingState: startingState,
     groups: buildInfo.groups,
   }
-  const battle = new RaidBattle(battleInfo);
-  const result = battle.result();
+  let result = undefined
+  const numBranches = (buildInfo.groups.map((g) => g.turns.map((t) => t.bossMoveInfo.moveData.name === "(Optimal Move)" ? 1 : 0)).flat() as number[]).reduce((acc, v) => acc + v, 0);
+  if (numBranches > 0 && buildInfo.pokemon[0].moveData.filter(m => m.name !== "(No Move)").length > 1) {
+    result = optimizeBossMoves(buildInfo.pokemon, buildInfo.groups, false);
+  } else {
+    const battle = new RaidBattle(battleInfo);
+    result = battle.result();
+  }
   let totalTurns = strategy.turns.length; 
   if (strategy.repeats) {
     totalTurns = strategy.groups!.reduce((a, b, i) => b.length * (strategy.repeats![i] || 1) + a, 0);
@@ -86,8 +90,28 @@ async function resultsFromHash(hash: string) {
   return result;
 }
 
-async function testOHKO(strategy: LightBuildInfo) {
+async function testOHKO(strategy: LightBuildInfo, debug = false) {
   const result = await resultsFromLightBuild(strategy);
+  if (debug) {
+    for (const tr of result.turnResults.slice(-1)) {
+      console.log("Turn " + tr.id);
+      console.log("   Move Results:");
+      for (const mr of tr.results) {
+        console.log("      " + mr.desc);
+        console.log("      " + mr.flags);
+      }
+      console.log("   State:");
+      for (const raider of tr.state.raiders) {
+        console.log("      " + raider.name);
+        console.log("      " + raider.ability);
+        console.log("      " + raider.item);
+        console.log("      " + raider.status);
+        console.log("      " + Object.values(raider.boosts));
+        console.log("      " + raider.volatileStatus);
+        console.log("      " + raider.originalCurHP);
+      }
+    }
+  }
   expect(result.endState.raiders[0].originalCurHP).toEqual(0); // check for the OHKO
   // Some strategies include risk of fainting, so the following checks have beein omitted
   // // check that all raiders did not faint
@@ -95,6 +119,17 @@ async function testOHKO(strategy: LightBuildInfo) {
   //   expect(result.endState.raiders[i].originalCurHP).not.toEqual(0);
   // }
 }
+
+// describe('Failing Strats (Debugging)', () => {
+//   const failing = [
+//   ];
+//   for (const path of failing) {
+//     test(path, async () => {
+//       const module = await import(`./data/strats/${path}.json`);
+//       await testOHKO(module as LightBuildInfo, true);
+//     });
+//   }
+// })
 
 // Test cases for specific interactions
 // these also ensure that URL hashes are not broken

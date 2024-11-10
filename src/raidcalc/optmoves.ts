@@ -311,7 +311,7 @@ function resultObjective(result: RaidBattleResults): number {
     return ( bossKO ? 0 : 1000000000 ) + raiderKOs * 1000000 + raiderKOChances * 5000 - raiderHP;
 }
 
-export function optimizeBossMoves(raiders: Raider[], groups: TurnGroupInfo[]) {
+export function optimizeBossMoves(raiders: Raider[], groups: TurnGroupInfo[], log=true) {
     const startingState = new RaidState(raiders);
     const startingInfo: RaidBattleInfo = {
         startingState: startingState,
@@ -330,6 +330,8 @@ export function optimizeBossMoves(raiders: Raider[], groups: TurnGroupInfo[]) {
     const bestScore: [number] = [-Infinity];
     const branchCounter: [number] = [1];
     calculateBranches(branchChunks, startingResult, raiders[0].moveData, bestResult, bestScore, branchCounter);
-    console.log("Number of branches searched for boss move optimization: " + branchCounter[0]);
+    if (log) {
+        console.log("Number of branches searched for boss move optimization: " + branchCounter[0]);
+    }
     return bestResult[0];
 }
