@@ -1437,7 +1437,6 @@ export class RaidState implements State.RaidState{
     public faint(id: number) {
         let pokemon = this.getPokemon(id);
         const ability = pokemon.ability;
-        console.log("Fainted: " + id);
         // check Receiver / Power of Alchemy
         for (let i of getSpeedRanking([1,2,3,4], this.raiders)) {
             if (i === 0 || i === id) { continue; }

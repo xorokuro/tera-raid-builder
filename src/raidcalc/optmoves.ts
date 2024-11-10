@@ -67,7 +67,6 @@ function addNPCCheer(npcid: number, groups: TurnGroupInfo[]) { // without this, 
     for (let i = 0; i < groups.length; i++) {
         for (let j = 0; j < groups[i].turns.length; j++) {
             if (groups[i].turns[j].moveInfo.userID === 1 && groups[i].turns[j].moveInfo.moveData.name !== "(No Move)") {
-                console.log(groups[i].turns[j])
                 if (groups[i].turns[j].bossMoveInfo.moveData.name === "(Optimal Move)") {
                     const cheerMove: RaidTurnInfo = {
                         id: -1,
@@ -84,7 +83,6 @@ function addNPCCheer(npcid: number, groups: TurnGroupInfo[]) { // without this, 
                         },
                     };
                     groups[i].turns.splice(j+1, 0, cheerMove);
-                    console.log("NPC Cheer Added")
                 }
                 return;
             }

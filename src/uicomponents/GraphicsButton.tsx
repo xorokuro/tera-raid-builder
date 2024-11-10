@@ -648,7 +648,7 @@ function generateGraphic(theme: any, raidInputProps: RaidInputProps, results: Ra
     const root = createRoot(graphicTop);
 
     const ignoreStats = raidInputProps.pokemon.slice(1).map((raider) => (raider.isAnyLevel) || (Object.entries(raider.ivs).reduce((acc, val) => val[1] + acc, 0) === 0 && Object.entries(raider.evs).reduce((acc, val) => val[1] + acc, 0) === 0));
-    console.log(ignoreStats)
+    // console.log(ignoreStats)
     flushSync(() => {
         root.render(
             <ThemeProvider theme={graphicsTheme}>
