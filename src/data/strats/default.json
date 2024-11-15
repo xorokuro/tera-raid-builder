@@ -29,6 +29,7 @@
             },
             "level": 100,
             "gender": "M",
+            "teraType": "Ground",
             "moves": [
                 "Earthquake",
                 "Wood Hammer",
