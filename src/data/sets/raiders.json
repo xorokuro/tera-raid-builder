@@ -150,7 +150,7 @@
             "level":100,
             "item":"Sitrus Berry",
             "ability":"Thick Fat",
-            "nature":"Gold",
+            "nature":"Bold",
             "evs":{"hp":252,"df":252},
             "moves":["Apple Acid","Helping Hand","Sweet Scent","Reflect"]
         },
