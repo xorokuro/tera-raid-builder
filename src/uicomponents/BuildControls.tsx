@@ -1273,7 +1273,7 @@ function BuildControls({pokemon, abilities, moveSet, setPokemon, substitutes, se
             if (pokemon.level !== 1) {
                 setPokemonProperty("level")(1);
             }
-        } else if ((pokemon.level !== level) && !(level === 0 && pokemon.level === 1)) {
+        } else {
             setLevel(pokemon.level);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
