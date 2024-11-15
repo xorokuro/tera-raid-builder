@@ -52,15 +52,15 @@
         },
         {
             "id": 1,
-            "role": "Hydrapple",
-            "name": "Hydrapple",
+            "role": "Kyogre",
+            "name": "Kyogre",
             "shiny": false,
             "isAnyLevel": false,
-            "ability": "(No Ability)",
+            "ability": "Drizzle",
             "item": "Mirror Herb",
             "nature": "Modest",
             "evs": {
-                "hp": 252,
+                "hp": 0,
                 "atk": 0,
                 "def": 0,
                 "spa": 252,
@@ -78,77 +78,53 @@
             "level": 100,
             "gender": "N",
             "moves": [
-                "Nasty Plot",
-                "Grass Knot",
-                "Giga Drain",
-                "Breaking Swipe"
+                "Water Spout",
+                "Protect"
             ],
             "bossMultiplier": 100,
-            "extraMoves": [],
-            "shieldData": {
-                "hpTrigger": 0,
-                "timeTrigger": 0,
-                "shieldCancelDamage": 0,
-                "shieldDamageRate": 0,
-                "shieldDamageRateTera": 0,
-                "shieldDamageRateTeraChange": 0
-            }
+            "extraMoves": []
         },
         {
             "id": 2,
-            "role": "Arboliva",
-            "name": "Arboliva",
+            "role": "Stonjourner",
+            "name": "Stonjourner",
             "shiny": false,
-            "isAnyLevel": false,
-            "ability": "Seed Sower",
-            "item": "Sitrus Berry",
-            "nature": "Bold",
+            "isAnyLevel": true,
+            "ability": "Power Spot",
+            "item": "Focus Sash",
+            "nature": "Hardy",
             "evs": {
-                "hp": 252,
+                "hp": 0,
                 "atk": 0,
-                "def": 252,
+                "def": 0,
                 "spa": 0,
                 "spd": 0,
                 "spe": 0
             },
             "ivs": {
-                "hp": 31,
-                "atk": 31,
-                "def": 31,
-                "spa": 31,
-                "spd": 31,
-                "spe": 31
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
             },
-            "level": 100,
+            "level": 1,
             "gender": "N",
-            "moves": [
-                "Helping Hand",
-                "Reflect",
-                "Light Screen",
-                "Pollen Puff"
-            ],
+            "moves": [],
             "bossMultiplier": 100,
-            "extraMoves": [],
-            "shieldData": {
-                "hpTrigger": 0,
-                "timeTrigger": 0,
-                "shieldCancelDamage": 0,
-                "shieldDamageRate": 0,
-                "shieldDamageRateTera": 0,
-                "shieldDamageRateTeraChange": 0
-            }
+            "extraMoves": []
         },
         {
             "id": 3,
-            "role": "Corviknight",
-            "name": "Corviknight",
+            "role": "Bonsly",
+            "name": "Bonsly",
             "shiny": false,
-            "isAnyLevel": false,
-            "ability": "(No Ability)",
-            "item": "Shuca Berry",
-            "nature": "Careful",
+            "isAnyLevel": true,
+            "ability": "Sturdy",
+            "nature": "Hardy",
             "evs": {
-                "hp": 252,
+                "hp": 0,
                 "atk": 0,
                 "def": 0,
                 "spa": 0,
@@ -156,75 +132,52 @@
                 "spe": 0
             },
             "ivs": {
-                "hp": 31,
-                "atk": 31,
-                "def": 31,
-                "spa": 31,
-                "spd": 31,
-                "spe": 31
-            },
-            "level": 100,
-            "gender": "N",
-            "moves": [
-                "Fake Tears",
-                "Reflect",
-                "Light Screen",
-                "Tailwind"
-            ],
-            "bossMultiplier": 100,
-            "extraMoves": [],
-            "shieldData": {
-                "hpTrigger": 0,
-                "timeTrigger": 0,
-                "shieldCancelDamage": 0,
-                "shieldDamageRate": 0,
-                "shieldDamageRateTera": 0,
-                "shieldDamageRateTeraChange": 0
-            }
-        },
-        {
-            "id": 4,
-            "role": "Leafeon",
-            "name": "Leafeon",
-            "shiny": false,
-            "isAnyLevel": false,
-            "ability": "Leaf Guard",
-            "item": "Sitrus Berry",
-            "nature": "Impish",
-            "evs": {
-                "hp": 252,
+                "hp": 0,
                 "atk": 0,
                 "def": 0,
                 "spa": 0,
-                "spd": 252,
+                "spd": 0,
+                "spe": 0
+            },
+            "level": 1,
+            "gender": "N",
+            "moves": [
+                "Fake Tears"
+            ],
+            "bossMultiplier": 100,
+            "extraMoves": []
+        },
+        {
+            "id": 4,
+            "role": "Bonsly",
+            "name": "Bonsly",
+            "shiny": false,
+            "isAnyLevel": true,
+            "ability": "Sturdy",
+            "nature": "Hardy",
+            "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
                 "spe": 0
             },
             "ivs": {
-                "hp": 31,
-                "atk": 31,
-                "def": 31,
-                "spa": 31,
-                "spd": 31,
-                "spe": 31
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
             },
-            "level": 100,
+            "level": 1,
             "gender": "N",
             "moves": [
-                "Fake Tears",
-                "Helping Hand",
-                "Mud-Slap",
-                "Charm"
+                "Fake Tears"
             ],
             "bossMultiplier": 100,
-            "extraMoves": [],
-            "shieldData": {
-                "hpTrigger": 0,
-                "timeTrigger": 0,
-                "shieldCancelDamage": 0,
-                "shieldDamageRate": 0,
-                "shieldDamageRateTera": 0,
-                "shieldDamageRateTeraChange": 0
-            }
+            "extraMoves": []
         }
     ],
     "turns": [
