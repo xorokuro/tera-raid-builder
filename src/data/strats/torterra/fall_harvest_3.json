@@ -1,5 +1,5 @@
 {
-    "name": "Fall Harvest (three-person version)",
+    "name": "Fall Harvest (3-person version)",
     "notes": "",
     "credits": "the r/PokePortal Team",
     "pokemon": [
@@ -521,7 +521,7 @@
                     "shiny": false,
                     "ability": "(No Ability)",
                     "item": "Sitrus Berry",
-                    "nature": "Careful",
+                    "nature": "Impish",
                     "evs": {
                         "hp": 252,
                         "atk": 0,

@@ -190,7 +190,7 @@
             "isAnyLevel": false,
             "ability": "Leaf Guard",
             "item": "Sitrus Berry",
-            "nature": "Careful",
+            "nature": "Impish",
             "evs": {
                 "hp": 252,
                 "atk": 0,
@@ -593,7 +593,7 @@
                     "shiny": false,
                     "ability": "(No Ability)",
                     "item": "Sitrus Berry",
-                    "nature": "Careful",
+                    "nature": "Impish",
                     "evs": {
                         "hp": 252,
                         "atk": 0,
