@@ -3,7 +3,6 @@ import { MoveData, RaidMoveOptions } from "./interface";
 import { RaidState } from "./RaidState";
 import { Raider } from "./Raider";
 import { AbilityName, ItemName, MoveName, SpeciesName, StatIDExceptHP, StatusName, TypeName } from "../calc/data/interface";
-import { isGrounded } from "../calc/mechanics/util";
 import { absoluteFloor, isSuperEffective, pokemonIsGrounded, isStatus, getAccuracy, getBpModifier, isRegularMove, isRaidAction, getCritChance, getSpeedRanking } from "./util";
 import { getRollCounts, catRollCounts, combineRollCounts } from "./rolls"
 import persistentAbilities from "../data/persistent_abilities.json"
@@ -1756,7 +1755,7 @@ export class RaidMove {
                 break;
             case "Rest":
                 if ((this._user.status !== "slp")
-                    && !(isGrounded(this._user, this._user.field) && this._user.field.hasTerrain("Misty") || this._user.field.hasTerrain("Electric")) 
+                    && !(pokemonIsGrounded(this._user, this._user.field) && this._user.field.hasTerrain("Misty") || this._user.field.hasTerrain("Electric")) 
                     && (this._user.abilityNullified || !["Insomnia", "Purifying Salt", "Vital Spirit"].includes(this._user.ability as string)) 
                     && !(this._user.field.hasWeather("Sun") && this._user.hasAbility("Leaf Guard"))
                 ) {

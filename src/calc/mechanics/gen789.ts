@@ -274,7 +274,7 @@ export function calculateSMSSSV(
     move,
     defender.types[0],
     isGhostRevealed,
-    field.isGravity,
+    isGrounded(defender, field),
     isRingTarget
   );
   const type2Effectiveness = defender.types[1]
@@ -283,7 +283,7 @@ export function calculateSMSSSV(
       move,
       defender.types[1],
       isGhostRevealed,
-      field.isGravity,
+      isGrounded(defender, field),
       isRingTarget
     )
     : 1;
@@ -293,7 +293,7 @@ export function calculateSMSSSV(
       move,
       defender.types[2],
       isGhostRevealed,
-      field.isGravity,
+      isGrounded(defender, field),
       isRingTarget
     )
     : 1;
@@ -305,7 +305,7 @@ export function calculateSMSSSV(
       move,
       defTeraType,
       isGhostRevealed,
-      field.isGravity,
+      isGrounded(defender, field),
       isRingTarget
     );
   }
@@ -1024,7 +1024,7 @@ export function calculateBPModsSMSSSV(
       move,
       types[0],
       isGhostRevealed,
-      field.isGravity,
+      isGrounded(defender, field),
       isRingTarget
     );
     const type2Effectiveness = types[1] ? getMoveEffectiveness(
@@ -1032,7 +1032,7 @@ export function calculateBPModsSMSSSV(
       move,
       types[1],
       isGhostRevealed,
-      field.isGravity,
+      isGrounded(defender, field),
       isRingTarget
     ) : 1;
     const type3Effectiveness = types[2] ? getMoveEffectiveness(
@@ -1040,7 +1040,7 @@ export function calculateBPModsSMSSSV(
       move,
       types[2],
       isGhostRevealed,
-      field.isGravity,
+      isGrounded(defender, field),
       isRingTarget
     ) : 1;
     if (type1Effectiveness * type2Effectiveness * type3Effectiveness >= 2) {
