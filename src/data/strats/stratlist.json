@@ -1,6 +1,7 @@
 {
     "Torterra": {
-        "Fall Harvest": "torterra/main"
+        "Fall Harvest": "torterra/main",
+        "Fall Harvest (3-person version)": "torterra/fall_harvest_3"
     },
     "Feraligatr": {
         "Latr, Feraligatr!": "feraligatr/main",
