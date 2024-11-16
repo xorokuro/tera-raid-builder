@@ -37,7 +37,8 @@ export class RaidBattle {
     _turnZeroOrder!: number[];
 
     _firstRaiderHasMoved!: boolean;
-    _numNPCs!: number;
+    _npcIDs!: number[];
+    // _numNPCs!: number;
 
     constructor(info: RaidBattleInfo, result: RaidBattleResults | null = null) {
         if (result) {
@@ -62,7 +63,8 @@ export class RaidBattle {
             this._continuing = false;
             this._firstRaiderHasMoved = false;
         }
-        this._numNPCs = this.startingState.raiders.reduce((acc, raider) => acc + (raider.name === "NPC" ? 1 : 0), 0);
+        this._npcIDs = this.startingState.raiders.filter((raider) => raider.name === "NPC").map((raider) => raider.id);    
+        // this._numNPCs = this.startingState.raiders.reduce((acc, raider) => acc + (raider.name === "NPC" ? 1 : 0), 0);
     }
 
     public result(): RaidBattleResults {
@@ -103,33 +105,33 @@ export class RaidBattle {
             const repeats = this.groups[i].repeats || 1;
             for (let j = 0; j < repeats; j++) {
                 for (let k = 0; k < turns.length; k++) {
+                    if (this._state.raiders[0].originalCurHP === 0) { console.log("here", turnCounter); break; }
                     const turn = turns[k];
-                    const result = new RaidTurn(this._state, turn, turnCounter, this._numNPCs).result();
+                    const result = new RaidTurn(this._state, turn, turnCounter).result();
                     this._turnResults.push(result);
                     this._state = result.state;
                     if(turn.moveInfo.moveData.name !== "(No Move)") {
-                        if (turn.moveInfo.userID === 1 && this._numNPCs > 0) {
-                            if (!this._firstRaiderHasMoved) {
-                                const firstNPC = this._state.raiders.find(raider => raider.name === "NPC")!;
-                                const defCheerResult = new RaidTurn(
+                        if (turn.moveInfo.userID === 1 && this._npcIDs.length > 0 && this._state.raiders[0].originalCurHP > 0) {
+                            for (const npcID of this._npcIDs) {
+                                const raider = this._state.raiders[npcID];
+                                turnCounter++;
+                                const npcMove = {moveData: {name: (this._firstRaiderHasMoved ? "Splash" : "Defense Cheer") as MoveName}, userID: raider.id, targetID: raider.id};
+                                const npcResult = new RaidTurn(
                                     this._state,
                                     {
                                         id: -1,
                                         group: turn.group,
-                                        moveInfo: {moveData: {name: "Defense Cheer" as MoveName}, userID: firstNPC.id, targetID: firstNPC.id},
-                                        bossMoveInfo: {moveData: {name: "(Most Damaging)" as MoveName}, userID: 0, targetID: firstNPC.id, options: turn.bossMoveInfo.options},
+                                        moveInfo: npcMove,
+                                        bossMoveInfo: {moveData: {name: "(Most Damaging)" as MoveName}, userID: 0, targetID: raider.id, options: turn.bossMoveInfo.options},
                                     },
-                                    turnCounter,
-                                    0
+                                    turnCounter
                                 ).result();
-                                this._turnResults.push(defCheerResult);
+                                this._turnResults.push(npcResult);
                                 this._firstRaiderHasMoved = true;
-                                this._state = defCheerResult.state;
+                                this._state = npcResult.state;
                             }
-                            turnCounter = turnCounter + 1 + this._numNPCs;
-                        } else {
-                            turnCounter++;
                         }
+                        turnCounter++;
                     }
                 }
             }

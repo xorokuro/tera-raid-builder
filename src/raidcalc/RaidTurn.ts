@@ -39,7 +39,7 @@ export class RaidTurn {
     id:                 number;
     group?:             number;
     turnNumber:         number;
-    numNPCs:            number;
+    // numNPCs:            number;
 
     _isBossAction!:     boolean;
     _isCheer!:          boolean;
@@ -71,7 +71,7 @@ export class RaidTurn {
     _endFlags!:         string[];
 
 
-    constructor(raidState: RaidState, info: RaidTurnInfo, turnNumber: number, numNPCs: number) {
+    constructor(raidState: RaidState, info: RaidTurnInfo, turnNumber: number) { // numNPCs: number
         this.raidState = raidState;
         this.raiderID = info.moveInfo.userID;
         this.targetID = info.moveInfo.targetID;
@@ -86,7 +86,7 @@ export class RaidTurn {
         this.id = info.id;
         this.group = info.group;
         this.turnNumber = turnNumber;
-        this.numNPCs = numNPCs;
+        // this.numNPCs = numNPCs;
 
         this.raiderOptions = info.moveInfo.options || {};
         this.bossOptions = info.bossMoveInfo.options || {};
@@ -100,8 +100,8 @@ export class RaidTurn {
         // check if this marks the end of a 4-move "turn"
         const turnMoveNumber = this.turnNumber % 4;
         this._isEndOfFullTurn = !this._isBossAction && !this._isEmptyTurn && (
-            (turnMoveNumber === 3) || 
-            (this.raiderID === 1 && ((this.numNPCs + turnMoveNumber) >= 3))
+            (turnMoveNumber === 3) // || 
+            // (this.raiderID === 1 && ((this.numNPCs + turnMoveNumber) >= 3))
         );
         // set up moves
         this._raiderMove = new Move(9, this.raiderMoveData.name, this.raiderOptions);
@@ -260,7 +260,7 @@ export class RaidTurn {
 
         if (!this._isEmptyTurn) {
             this.removeProtection();
-            if (!this._isBossAction) {
+            if (!this._isBossAction && (this._raidState.raiders[0].originalCurHP > 0)) {
                 // end-of-turn damage
                 this.applyEndOfTurnDamage();
                 // item effects

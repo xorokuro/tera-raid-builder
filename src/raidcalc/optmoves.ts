@@ -21,6 +21,41 @@ function expandRepeats(groups: TurnGroupInfo[]) {
     return newGroups;
 }
 
+// expand host moves to include NPC actions
+function expandNPCMoves(groups: TurnGroupInfo[], npcIDs: number[]) {
+    let haveCheered = false;
+    const newGroups: TurnGroupInfo[] = [];
+    for (let g of groups) {
+        const newTurns: RaidTurnInfo[]  = [];
+        for (let t of g.turns) {
+            newTurns.push(t);
+            if (t.moveInfo.userID === 1 && t.moveInfo.moveData.name !== "(No Move)") {
+                for (const npcID of npcIDs) {
+                    const npcMoveInfo = {moveData: {name: (haveCheered ? "Splash" : "Defense Cheer") as MoveName}, userID: npcID, targetID: npcID};
+                    const npcMove: RaidTurnInfo = {
+                        id: -1,
+                        group: t.id,
+                        moveInfo: npcMoveInfo,
+                        bossMoveInfo: {
+                            userID: 0,
+                            targetID: npcID,
+                            moveData: { name: (t.bossMoveInfo.moveData.name === "(Optimal Move)" ? "(Optimal Move)" : "(Most Damaging)") as MoveName},
+                        },
+                    };
+                    newTurns.push(npcMove);
+                    haveCheered = true;
+                }
+            }
+        }
+        newGroups.push({
+            id: g.id,
+            turns: newTurns,
+            repeats: g.repeats
+        });
+    }
+    return newGroups;
+}
+
 // break groups into "chunks" at points where "(Optimal Move)" is selected for the boss
 function splitGroups(groups: TurnGroupInfo[]): TurnGroupInfo[][] {
     const groupsChunks: TurnGroupInfo[][] = [];
@@ -63,32 +98,32 @@ function splitGroups(groups: TurnGroupInfo[]): TurnGroupInfo[][] {
     return groupsChunks;
 }
 
-function addNPCCheer(npcid: number, groups: TurnGroupInfo[]) { // without this, the NPC cheer gets skipped if the host's first move has boss move optimization
-    for (let i = 0; i < groups.length; i++) {
-        for (let j = 0; j < groups[i].turns.length; j++) {
-            if (groups[i].turns[j].moveInfo.userID === 1 && groups[i].turns[j].moveInfo.moveData.name !== "(No Move)") {
-                if (groups[i].turns[j].bossMoveInfo.moveData.name === "(Optimal Move)") {
-                    const cheerMove: RaidTurnInfo = {
-                        id: -1,
-                        group: groups[i].turns[j].id,
-                        moveInfo: {
-                            userID: npcid,
-                            targetID: npcid,
-                            moveData: { name: "Defense Cheer" as MoveName },
-                        },
-                        bossMoveInfo: {
-                            userID: 0,
-                            targetID: npcid,
-                            moveData: groups[i].turns[j].bossMoveInfo.moveData,
-                        },
-                    };
-                    groups[i].turns.splice(j+1, 0, cheerMove);
-                }
-                return;
-            }
-        }
-    }
-}
+// function addNPCCheer(npcid: number, groups: TurnGroupInfo[]) { // without this, the NPC cheer gets skipped if the host's first move has boss move optimization
+//     for (let i = 0; i < groups.length; i++) {
+//         for (let j = 0; j < groups[i].turns.length; j++) {
+//             if (groups[i].turns[j].moveInfo.userID === 1 && groups[i].turns[j].moveInfo.moveData.name !== "(No Move)") {
+//                 if (groups[i].turns[j].bossMoveInfo.moveData.name === "(Optimal Move)") {
+//                     const cheerMove: RaidTurnInfo = {
+//                         id: -1,
+//                         group: groups[i].turns[j].id,
+//                         moveInfo: {
+//                             userID: npcid,
+//                             targetID: npcid,
+//                             moveData: { name: "Defense Cheer" as MoveName },
+//                         },
+//                         bossMoveInfo: {
+//                             userID: 0,
+//                             targetID: npcid,
+//                             moveData: groups[i].turns[j].bossMoveInfo.moveData,
+//                         },
+//                     };
+//                     groups[i].turns.splice(j+1, 0, cheerMove);
+//                 }
+//                 return;
+//             }
+//         }
+//     }
+// }
 
 // checks for changes in stats and other modifiers between two states for a single raider
 function nonHPChanges(caseA: Raider, caseB: Raider): boolean {
@@ -183,8 +218,8 @@ function pickInterestingMoves(state: RaidState, turn: RaidTurnInfo, turnNumber: 
                 moveData: m,
             }
         }
-        const numNPCs = state.raiders.reduce((acc, raider) => acc + (raider.name === "NPC" ? 1 : 0), 0); // Store this somewhere to avoid recalculating it?
-        const result = new RaidTurn(state, turnInfo, turnNumber, numNPCs).result();
+        // const numNPCs = state.raiders.reduce((acc, raider) => acc + (raider.name === "NPC" ? 1 : 0), 0); // Store this somewhere to avoid recalculating it?
+        const result = new RaidTurn(state, turnInfo, turnNumber).result();
         const targetID = turn.moveInfo.userID;
         const damage = state.raiders[targetID].originalCurHP - result.state.raiders[targetID].originalCurHP;
         if (damage > mostDamage) {
@@ -265,6 +300,7 @@ function calculateBranches(branchChunks: TurnGroupInfo[][], prevResults: RaidBat
         return;
     }
     if (branchChunks.length === 0 ||
+        prevResults.endState.raiders[0].originalCurHP <= 0 ||
         (branchChunks.reduce((acc, c) => acc + c.reduce((acc2, g) => acc2 + g.turns.length, 0), 0) === 0)
     ) {
         const score = resultObjective(prevResults);
@@ -277,7 +313,9 @@ function calculateBranches(branchChunks: TurnGroupInfo[][], prevResults: RaidBat
     if (branchChunks.length === 1) {
         const lastGroup = branchChunks[0][branchChunks[0].length-1];
         const lastTurn = lastGroup.turns[lastGroup.turns.length-1];
-        if (lastTurn.bossMoveInfo.moveData.name !== "(Optimal Move)") {
+        if (lastTurn.bossMoveInfo.moveData.name !== "(Optimal Move)" ||
+            prevResults.endState.raiders[0].originalCurHP <= 0
+        ) {
             const finalResults = new RaidBattle({startingState: prevResults.endState, groups: branchChunks[0]}, prevResults).result();
             const score = resultObjective(finalResults);
             if (score > bestScore[0]) {
@@ -319,10 +357,10 @@ export function optimizeBossMoves(raiders: Raider[], groups: TurnGroupInfo[], lo
     }
     const startingResult = new RaidBattle(startingInfo).result();
 
-    const expandedGroups = expandRepeats(groups);
-    const npcid = raiders.findIndex((r) => r.name === "NPC");
-    if (npcid >= 0) {
-        addNPCCheer(npcid, expandedGroups);
+    let expandedGroups = expandRepeats(groups);
+    const npcIDs = raiders.filter((raider) => raider.name === "NPC").map((raider) => raider.id);    
+    if (npcIDs.length > 0) {
+        expandedGroups = expandNPCMoves(expandedGroups, npcIDs);
     }
     const branchChunks = splitGroups(expandedGroups.filter((g) => g.turns.length > 0));
 
