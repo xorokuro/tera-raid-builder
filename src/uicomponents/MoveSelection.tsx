@@ -33,6 +33,18 @@ import { alpha } from "@mui/material";
 import { RaidBattleResults } from "../raidcalc/RaidBattle";
 import { getSelectableMoves, isRegularMove } from "../raidcalc/util";
 
+const STRUGGLE_DATA: MoveData = {
+    name: "Struggle" as MoveName,
+    moveCategory: "Physical",
+    category: "damage",
+    target: "selected-pokemon",
+    type: "Normal",
+    power: 50,
+    accuracy: undefined,
+    priority: 0,
+    selfDamage: 25,
+};
+
 const RepeatsInput = styled(MuiInput)`
   width: 42px;
 `;
@@ -326,7 +338,10 @@ function MoveDropdown({groupIndex, turnIndex, raiders, groups, setGroups, select
 
     // const moves = getSelectableMoves(raiders[moveInfo.userID]); // raiders[moveInfo.userID].moves;
     const raider = raiders[groups[groupIndex].turns[turnIndex].moveInfo.userID];
-    const moveSet = ["(No Move)", "(Most Damaging)", ...selectableMoves, ...(raider.cheersLeft || 0 > 0 ? ["Attack Cheer", "Defense Cheer", "Heal Cheer"] : [])];
+    if (moveName === "Belch") {
+        console.log(raider.preventBelch);
+    }
+    const moveSet = ["(No Move)", "(Most Damaging)", ...(selectableMoves.length > 0 ? selectableMoves : ["Struggle"]), ...(raider.cheersLeft || 0 > 0 ? ["Attack Cheer", "Defense Cheer", "Heal Cheer"] : [])];
 
     const [disableTarget, setDisableTarget] = useState<boolean>(
             moveInfo.moveData.name === "(No Move)" ||
@@ -479,6 +494,8 @@ function MoveDropdown({groupIndex, turnIndex, raiders, groups, setGroups, select
                                 mData = {name: name, priority: 10, category: "field-effect", target: "user-and-allies"};
                             } else if (name === "Heal Cheer") {
                                 mData = {name: name, priority: 10, category: "heal", target: "user-and-allies"};
+                            } else if (name === "Struggle") {
+                                mData = {...STRUGGLE_DATA};
                             } else {
                                 mData = raiders[moveInfo.userID].moveData.find((m) => m.name === name) as MoveData;
                             }

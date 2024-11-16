@@ -50,7 +50,13 @@ export class RaidBattle {
             this._continuing = true;
             this._firstRaiderHasMoved = this._turnResults.some(turn => turn.moveInfo.userID === 1 && turn.moveInfo.moveData.name !== "(No Move)");
         } else {
-            this.startingState = info.startingState;
+            this.startingState = info.startingState.clone();
+            // This is a hack
+            // Moves that shouldn't be selectable need to be allowed by default to prevent issues with the move selection UI
+            // We set them to unusable here
+            for (let raider of this.startingState.raiders) {
+                raider.preventBelch = true;
+            }
             this.groups = info.groups;
             this._turnResults = [];
             this._continuing = false;

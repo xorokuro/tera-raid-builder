@@ -275,6 +275,7 @@ export class RaidState implements State.RaidState{
                 if (pokemon.status === "par") { 
                     pokemon.status = "";
                     pokemon.lastConsumedItem = item as ItemName; 
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
                 break;
@@ -283,6 +284,7 @@ export class RaidState implements State.RaidState{
                     pokemon.status = "";
                     pokemon.isSleep = 0;
                     pokemon.lastConsumedItem = item as ItemName; 
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
                 break;
@@ -290,6 +292,7 @@ export class RaidState implements State.RaidState{
                 if (pokemon.status === "psn") { 
                     pokemon.status = "";
                     pokemon.lastConsumedItem = item as ItemName; 
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
                 break;
@@ -297,6 +300,7 @@ export class RaidState implements State.RaidState{
                 if (pokemon.status === "brn") { 
                     pokemon.status = "";
                     pokemon.lastConsumedItem = item as ItemName; 
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
                 break;
@@ -305,6 +309,7 @@ export class RaidState implements State.RaidState{
                     pokemon.status = "";
                     pokemon.isFrozen = 0;
                     pokemon.lastConsumedItem = item as ItemName; 
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
                 break;
@@ -314,11 +319,13 @@ export class RaidState implements State.RaidState{
                     pokemon.isFrozen = 0;
                     pokemon.isSleep = 0;
                     pokemon.lastConsumedItem = item as ItemName; 
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
                 if (pokemon.volatileStatus.includes("confusion")) { 
                     pokemon.volatileStatus = pokemon.volatileStatus.filter(status => status !== "confusion"); 
                     pokemon.lastConsumedItem = item as ItemName;
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
                 break;
@@ -326,6 +333,7 @@ export class RaidState implements State.RaidState{
                 if (pokemon.volatileStatus.includes("confusion")) { 
                     pokemon.volatileStatus = pokemon.volatileStatus.filter(status => status !== "confusion"); 
                     pokemon.lastConsumedItem = item as ItemName;
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
                 break;
@@ -334,6 +342,7 @@ export class RaidState implements State.RaidState{
                 const atkDiff = this.applyStatChange(id, {atk: (pokemon.hasAbility("Ripen") ? 2 : 1)});
                 if (atkDiff.atk){
                     pokemon.lastConsumedItem = item as ItemName;
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
                 break;
@@ -342,6 +351,7 @@ export class RaidState implements State.RaidState{
                 const defDiff = this.applyStatChange(id, {def: (pokemon.hasAbility("Ripen") ? 2 : 1)});
                 if (defDiff.def){
                     pokemon.lastConsumedItem = item as ItemName;
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
                 break;
@@ -349,6 +359,7 @@ export class RaidState implements State.RaidState{
                 const spaDiff = this.applyStatChange(id, {spa: (pokemon.hasAbility("Ripen") ? 2 : 1)});
                 if (spaDiff.spa){
                     pokemon.lastConsumedItem = item as ItemName;
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
                 break;
@@ -357,6 +368,7 @@ export class RaidState implements State.RaidState{
                 const spdDiff = this.applyStatChange(id, {spd: (pokemon.hasAbility("Ripen") ? 2 : 1)});
                 if (spdDiff.spd){
                     pokemon.lastConsumedItem = item as ItemName;
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
                 break;
@@ -364,17 +376,20 @@ export class RaidState implements State.RaidState{
                 const speDiff = this.applyStatChange(id, {spe: (pokemon.hasAbility("Ripen") ? 2 : 1)});
                 if (speDiff.spe){
                     pokemon.lastConsumedItem = item as ItemName;
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
                 break;
             case "Starf Berry":
                 pokemon.randomBoosts += pokemon.boostCoefficient * (pokemon.hasAbility("Ripen") ? 4 : 2);
                 pokemon.lastConsumedItem = item as ItemName;
+                pokemon.preventBelch = false;
                 if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 break;
             case "Lansat Berry":
                 if (!pokemon.isPumped) {
                     pokemon.lastConsumedItem = item as ItemName;
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
                 pokemon.isPumped = 2;
@@ -382,6 +397,7 @@ export class RaidState implements State.RaidState{
             case "Micle Berry":
                 if (!pokemon.isMicle) {
                     pokemon.lastConsumedItem = item as ItemName;
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
                 pokemon.isMicle = true;
@@ -393,6 +409,7 @@ export class RaidState implements State.RaidState{
                 if (pokemon.originalCurHP < maxhp) {
                     pokemon.applyDamage(-Math.floor(maxhp / (pokemon.hasAbility("Ripen") ? 2 : 4)), undefined, true);
                     pokemon.lastConsumedItem = item as ItemName;
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
                 break;
@@ -400,6 +417,7 @@ export class RaidState implements State.RaidState{
                 if (pokemon.originalCurHP < pokemon.maxHP()) {
                     pokemon.applyDamage(-Math.min(pokemon.maxHP() - pokemon.originalCurHP, pokemon.hasAbility("Ripen") ? 20 : 10), undefined, true);
                     pokemon.lastConsumedItem = item as ItemName;
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                 }
                 break;
@@ -412,6 +430,7 @@ export class RaidState implements State.RaidState{
                 if (pokemon.originalCurHP < maxhp) {
                     pokemon.applyDamage(-Math.floor(pokemon.maxHP() * (pokemon.hasAbility("Ripen") ? 2 : 1) / 3), undefined, true);
                     pokemon.lastConsumedItem = item as ItemName;
+                    pokemon.preventBelch = false;
                     if (pokemon.hasAbility("Cud Chew")) { pokemon.isCudChew = 2; }
                     const nature = gen.natures.get(toID(pokemon.nature));
                     if ((item === "Aguav Berry"  && (nature!.plus !== "spd" && nature!.minus === "spd")) ||

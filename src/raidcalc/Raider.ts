@@ -57,6 +57,7 @@ export class Raider extends Pokemon implements State.Raider {
     syrupBombDrops?: number;  // stores the number of speed drops left to be applied from Syrup Bomb
 
     lastConsumedItem?: ItemName; // stores the last berry consumed by the raider (via normal consuption of Fling)
+    preventBelch?: boolean;
     isCudChew?: number;          // store number of "turns" (each made of 4 moves) until Cud Chew activates
 
     isTransformed?: boolean; // indicates that the pokemon has been transformed by Transform or Imposter
@@ -113,6 +114,7 @@ export class Raider extends Pokemon implements State.Raider {
         originalAbility: AbilityName | "(No Ability)" | undefined = undefined,
         syrupBombDrops: number | undefined = 0,
         lastConsumedItem: ItemName | undefined = undefined,
+        preventBelch: boolean | undefined = false,
         isCudChew: number | undefined = 0,
         isTransformed: boolean | undefined = undefined,
         isChangedForm: boolean | undefined = undefined,
@@ -169,6 +171,7 @@ export class Raider extends Pokemon implements State.Raider {
         this.originalAbility = originalAbility || pokemon.ability || "(No Ability)";
         this.syrupBombDrops = syrupBombDrops;
         this.lastConsumedItem = lastConsumedItem;
+        this.preventBelch = preventBelch;
         this.isCudChew = isCudChew;
         this.isTransformed = isTransformed;
         this.isChangedForm = isChangedForm;
@@ -269,6 +272,7 @@ export class Raider extends Pokemon implements State.Raider {
             this.originalAbility,
             this.syrupBombDrops,
             this.lastConsumedItem,
+            this.preventBelch,
             this.isCudChew,
             this.isTransformed,
             this.isChangedForm,

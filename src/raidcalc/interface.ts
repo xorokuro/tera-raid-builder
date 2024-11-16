@@ -160,6 +160,7 @@ export interface Raider extends Pokemon {
     originalAbility?: AbilityName | "(No Ability)"; // stores ability when nullified
     syrupBombDrops?: number;
     lastConsumedItem?: ItemName;
+    preventBelch?: boolean;
     isCudChew?: number;    // store number of "turns" (each made of 4 moves) until Cud Chew activates
     isTransformed?: boolean;
     originalSpecies?: SpeciesName;

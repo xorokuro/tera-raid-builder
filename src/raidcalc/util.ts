@@ -403,6 +403,9 @@ export function getSelectableMoves(pokemon: Raider, isBossAction: boolean = fals
         if (pokemon.item === "Assault Vest") {
             selectableMoves = selectableMoves.filter(m => m.moveCategory !== "Status");
         }
+        if (pokemon.preventBelch) {
+            selectableMoves = selectableMoves.filter(m => m.name !== "Belch");
+        }
     }
     return selectableMoves.map(m => m.name);
 }
