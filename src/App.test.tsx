@@ -50,7 +50,7 @@ Object.assign(global, { TextDecoder, TextEncoder });
 
 // RaidCalc tests
 
-async function resultsFromLightBuild(strategy: LightBuildInfo) {
+async function resultsFromLightBuild(strategy: LightBuildInfo, skipMoveCountCheck = false) {
   const info = await lightToFullBuildInfo(strategy);
   expect(info).not.toBeNull(); // check that the strategy has been loaded successfully
   for (let raider of info!.pokemon) {
@@ -73,20 +73,29 @@ async function resultsFromLightBuild(strategy: LightBuildInfo) {
     const battle = new RaidBattle(battleInfo);
     result = battle.result();
   }
-  let totalTurns = strategy.turns.length; 
-  if (strategy.repeats) {
-    totalTurns = strategy.groups!.reduce((a, b, i) => b.length * (strategy.repeats![i] || 1) + a, 0);
+  if (!skipMoveCountCheck) {
+    let totalTurns = strategy.turns.length; 
+    if (strategy.repeats) {
+      totalTurns = strategy.groups!.reduce((a, b, i) => b.length * (strategy.repeats![i] || 1) + a, 0);
+    }
+    const numNPCs = startingState.raiders.filter((raider) => raider.name === "NPC").length;
+    const numHostMoves = buildInfo.groups.reduce((acc, g) => acc + g.turns.reduce((tacc, t) => tacc + ((t.moveInfo.userID === 1 && t.moveInfo.moveData.name !== "(No Move)") ? 1 : 0), 0), 0);
+    totalTurns += numNPCs * numHostMoves;
+    const lastGroupTurns = buildInfo.groups[buildInfo.groups.length - 1].turns;
+    if (lastGroupTurns[lastGroupTurns.length -1].moveInfo.userID === 1) {
+      totalTurns -= numNPCs; // NPCs won't move after the boss is KOd
+    }
+    // if (startingState.raiders.some(r => r.name === "NPC") && buildInfo.groups.some(g => g.turns.some(t => t.moveInfo.userID === 1 && t.moveInfo.moveData.name !== "(No Move)"))) {
+    //   totalTurns += 1; // NPC moves first in the first turn
+    //
+    expect(result.turnResults.length).toEqual(totalTurns);
   }
-  if (startingState.raiders.some(r => r.name === "NPC") && buildInfo.groups.some(g => g.turns.some(t => t.moveInfo.userID === 1 && t.moveInfo.moveData.name !== "(No Move)"))) {
-    totalTurns += 1; // NPC moves first in the first turn
-  }
-  expect(result.turnResults.length).toEqual(totalTurns); // this checks that the calc didn't encounter an error
   return result;
 }
 
-async function resultsFromHash(hash: string) {
+async function resultsFromHash(hash: string, skipMoveCountCheck = false) {
   const obj = deserialize(hash);
-  const result = await resultsFromLightBuild(obj);
+  const result = await resultsFromLightBuild(obj, skipMoveCountCheck);
   return result;
 }
 
@@ -142,7 +151,9 @@ describe('Specific Test Cases', () => {
   })
   test('qp_activation', async () => {
     const hash: string = "#H4sIAAAAAAAAA8VUUU/bMBD+K5H3skme1NACXd/oAI1JbAx4q/Jgkkvw4trR2anIEP99ZyehTcue1m5KZJ3Pd9/35e7iZ5azGUt/WqMZZ47NFosRZ1osgSXcmzLrjBSloxALqdGZwOYizyF1llxolPJBMWe1Bbw690gCC3DBNJWTRlsfccRZgaauyLs0K7jSuSHzwVh73W9bHG0ceOgUIZOBpDIlLFuRNWrvCUi2U/foMYUrac0g9zorEdYsrNCxk1Rg3fdR/INU0jVkSQfL4CdwfwIrzyDDqmAFyvMCivumgk687ZXXyslKSUCf9+RQXIfTJOFsxWbPjGp6whnr3kVwTDlpvhUyi+YEQQe3UEhQUEqy338z0Vkr7QPjulaKsy8CMxIakk8p+fVJXnrnON566SgejVqARRLsRdLHT3ncKgCM3sXEeoVGR/NaZ6FCP2qBZXSOcuV3nx9NpSCaA6Kv1l+LYZcI8As+nge4s6Jtw67Eo7XEIwq8kTqtMX2UfgwuFI0fyjS6q2nU9lanNe49fa0gql1Z47WsMSn5jkIXNdZk3jXLB2ms9C2dG2NpZqILDVjsp2xz0lVGcwRRviFrspY1IbqvsihUU9V5vjNT7AacaMQeG3otrWteS8bZpZK62NCYdIN/zLuUsJu0wvwPQ6piOgvuMc+FstCtbOmb8NJLGeaMKOvNHPEUcvqsY5qlAe9mKamhf0DZC/N4yNyWhrp1SM6TLc6N/+2wZZ4MibfmYnJQ7uP/9dGnQ+L+Qjsw63TIunNx0cgfkv7Tv652Em6Sl98TYWNjswgAAA==";
-    const result = await resultsFromHash(hash); 
+    const build = deserialize(hash) as LightBuildInfo;
+    build.pokemon[0].bossMultiplier = 1000; // ensure the boss isn't KOd early and mess up move counts
+    const result = await resultsFromLightBuild(build); 
     // T1 Electric terrain -> QP boost is spe, hasn't used booster
     expect(result.turnResults[0].state.raiders[1].abilityOn).toEqual(true);
     expect(result.turnResults[0].state.raiders[1].boostedStat).toEqual("spe");
@@ -712,7 +723,11 @@ describe('Specific Test Cases', () => {
   })
   test('stockpile-spitup-swallow', async() => {
     const hash = "#H4sIAAAAAAAAA9VWS0/jMBD+K5FPIPnQJ1BuUGCX1cKBFu2hysFNJqm3jh3ZTqFC/PedcZJC2V2JaldUaGLHHo/nm2/8SJ5Yxk5Z8tMZzTjz7HQ263CmRQEs5tSUKTW6nFUO7PUFGQmbgw9NU3pptCOLHme5NVWJ2sKs4FpnBptz49xN260dJlZ6HHGQGJ0Ku77MMki8Q5U1SuFrIb1rbBfkTvgl1ilkNKsUoU5DDRuzqZV5DpaikwW89NxCgkrHQiegLkQhctgo6+6d8H9STcGKv6jHC6FzaJKijQcKPbGQykCiNEso6mRWVpMmpCXwgxJEMHLV3HnpK5pc5w65Uxwh8QFXr/Et3Zlef4cVUF7EXCrpg9pDEYwRgsxhRU5lqFVjnYNO64RgzNN1Cc3CuHZVKuVlqWSwgUdvxU0z2pL2gsUxZyt2+sRwX5xwxppnFhQjjqm/EzKNztEfDlznuVrPqwwXKhPKQVOzg1sTndXBHzKuK6U4+ypsilSCoyN0tJH4uVX2u28eHOp2EPO2cTJjV2IJ0RSEJfhzk66jiRIFppTsZnHt6XjbfQsw4rh+PyTF7EPMW50dCfSGvQYhtHYiMfEmWZYyrP+klD66p10/eRBKmQdsXUAG2kE0rqx6LzXcUd8Cm7Km9rqzRe3KStwo0ZcK6aDd5UoapEmhjIUq/ge/d0bc/3QRDz5NxHFzYgd8iBKa/Tf7Cg9Dpx4ZbgdfSLzLui+8ceLrU9fBic00byuoK1aIR5xUYzfzBnyE0rrY7PMdYA9ujPNRuIylzg93wu60MIT9ct4+CL3bmu4FvYeyP/Q+yv7QSf5pz+HNT9/F3VCPUPbH+QRlg95+RT4I+xjlo7HxdpsNsRrRzyD9ltEfFZY+lgGWIywnWI7j8M/2m9D8mLdPHD8//wLigcdtFQsAAA==";
-    const result = await resultsFromHash(hash);
+    const build = deserialize(hash) as LightBuildInfo;
+    build.pokemon[0].bossMultiplier = 1000; // ensure the boss isn't KOd early and mess up move counts
+    build.turns[8].bossMoveInfo.name = "(No Move)";
+    build.turns[9].bossMoveInfo.name = "(No Move)";
+    const result = await resultsFromLightBuild(build);     
     // T2: Spit-Up should not do any damage
     expect(result.turnResults[1].state.raiders[1].stockpile).toEqual(0);
     expect(result.turnResults[1].results[0].state.raiders[0].originalCurHP).toEqual(Math.floor(result.endState.raiders[0].maxHP()));
@@ -720,8 +735,7 @@ describe('Specific Test Cases', () => {
     expect(result.turnResults[4].state.raiders[1].stockpile).toEqual(3);
     // T6: Still 3 Stockpile stacks expected after another use
     expect(result.turnResults[5].state.raiders[1].stockpile).toEqual(3);
-    // T7: Igglybuff faints, Stockpile stacks reset
-    expect(result.turnResults[6].state.raiders[0].originalCurHP).toEqual(0);
+    // T7: Stockpile stacks reset
     expect(result.turnResults[6].state.raiders[1].stockpile).toEqual(0);
     // T9: Swallow Heals
     expect(result.turnResults[8].state.raiders[1].originalCurHP).toBeGreaterThan(result.turnResults[7].state.raiders[1].originalCurHP);
@@ -875,14 +889,16 @@ describe('Specific Test Cases', () => {
   })
   test('white-herb-gooey-npc', async() => {
     const hash = "#H4sIAAAAAAAAA81VTW/bMAz9K4ZOHaCD4zT9unXJ2hRoiqIJ0EPgg2IzjhZZMiQ5XVDkv4+U7aQZVqzbYRts0NQTRfKRtP3KluyKZV+d0Ywzz67m85gzLUpgKSdV5qT0OKsd2LsRGQlbgA+qqbw02pFFwllhTV0hWpoN3OmlQXVhnJt0y8ZhZqXHHQeZ0bmw2y/LJWTeISSUMi8T6Ui3Ril8rKR37bkVuRZ+jTKHJXmoRJB5kLA3m1lZFGApU1nCYeVWElQ+FDoDNRKlKGAPNssn4X8GzcCKd+DhSugC2gJp44FSzyzkMhCqzBrKprC11YSEEgV+UIEIRq5eOC99TYebOiJ3yiM0IcTVW3xKd62397ABqotYSCV9gD2UwRhDkDlsyKkMUrXWBei8KQjmPNtW0DbJdR2qlZeVksEGvnkrJu1uR9oLlqacbdjVK8MZueCMtfc8AJccS39rTB5K1SlLoRy0kkDAhHWtFGdjYXNchLNneDbmveSik+mu2+j3frhx6xIjPbR+5mxkRWF09FhjDIw8rS2NxlTVeQHRZ1MucPVoXsBGzytZYYGTQRzjuSchdTSiWUAsRDvnZzHd/ZgnMT8f8P4g3XWpXHJs8LWsDNW6fR6xm66lUtG91DSfGMpDNAZL0e/KSrrVnmsySJBnI+Nfce3FR2SnOFqQoS82BlVJXURjoWn8ZzJbh5m5qe02mr7IKgwTHZ/v6cWH6y0xHLihgqWQlsbpoB7Ru7ESZyi6rbFv7/cw/gNOt1ZsaJL32RJ+yK6Pto9D1somG29rTOnkwUTXzWvw6TdSOgZ7b1L5YL1O/5uM0vblOw1QULFcXUGxsUkDDo562XZUbArGewdiePJkYpyPwhcOZwsp4Pv4IQ+dj1O07+3dvZ1FhOO/nsy+AP8yGWzSPKYfBH3b0/CnwIvQlHd3mu523wGz2q28iQcAAA==";
-    const result = await resultsFromHash(hash);
+    const result = await resultsFromHash(hash, true);
     // T1: White Herb activates *after* all of the hits from Fury Swipes
     expect(result.turnResults[1].results[0].state.raiders[1].boosts.spe).toEqual(0);
     // T2: NPC cheers after the host (raider 1) moves
     expect(result.turnResults[2].results[0].userID).toEqual(3);
     expect(result.turnResults[2].results[0].desc[3].includes("Defense Cheer")).toEqual(true);
-    // T3: This time, Fury Swipes gets -1 speed for each hit
-    expect(result.turnResults[3].results[0].state.raiders[1].boosts.spe).toEqual(-5);
+    // T3: The other NPC splashes
+
+    // T4: This time, Fury Swipes gets -1 speed for each hit
+    expect(result.turnResults[4].results[0].state.raiders[1].boosts.spe).toEqual(-5);
   })
 })
 

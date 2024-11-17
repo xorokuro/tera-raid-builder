@@ -105,7 +105,7 @@ export class RaidBattle {
             const repeats = this.groups[i].repeats || 1;
             for (let j = 0; j < repeats; j++) {
                 for (let k = 0; k < turns.length; k++) {
-                    if (this._state.raiders[0].originalCurHP === 0) { console.log("here", turnCounter); break; }
+                    if (this._state.raiders[0].originalCurHP === 0) { break; }
                     const turn = turns[k];
                     const result = new RaidTurn(this._state, turn, turnCounter).result();
                     this._turnResults.push(result);
