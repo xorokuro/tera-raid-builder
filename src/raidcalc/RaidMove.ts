@@ -11,6 +11,7 @@ import chargeMoves from "../data/charge_moves.json";
 import rechargeMoves from "../data/recharge_moves.json";
 import magicBounceMoves from "../data/magicbounce_moves.json";
 import thawUserMoves from "../data/thaw_user_moves.json";
+import { getModifiedStat } from "../calc/mechanics/util";
 
 export type RaidMoveResult= {
     state: RaidState;
@@ -817,6 +818,9 @@ export class RaidMove {
                             calcMove.hits = 1;
                             calcMove.isCrit = crit;
                             calcMove.isSpread = !!this._isSpread;
+                            if (calcMove.name === "Beat Up") {
+                                calcMove.bp = Math.floor(getModifiedStat(moveUser.stats.atk, moveUser.boosts.atk)  / 10 + 5);
+                            }
                             calcMove.bp = calcMove.bp * bpModifier; // from interactions like Dig + Earthquake
                             calcMove.bp = ((calcMove.name === "Triple Axel" || calcMove.name === "Triple Kick") ? i+1 : 1) * calcMove.bp;
                             if (calcMove.name === "Pollen Puff" && this.userID !== 0 && this._targetID !== 0) {
