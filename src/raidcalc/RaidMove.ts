@@ -890,6 +890,14 @@ export class RaidMove {
                                 hasCausedDamage = true;
                                 moveUser.field.attackerSide.isHelpingHand = false;
                             }
+                            // non-contact checks when a move hits
+                            if (
+                                (this.moveData.moveCategory === "Physical" && target.hasItem("Jaboca Berry")) ||
+                                (this.moveData.moveCategory === "Special" && target.hasItem("Rowap Berry"))
+                            ) {
+                                this._raidState.applyDamage(this.userID, Math.floor(this._user.maxHP() / 8 / ((this._user.bossMultiplier || 100) / 100)));
+                                this._raidState.consumeItem(target.id, target.item!)
+                            }
                             // contact checks
                             if (this.moveData.makesContact && !this._user.hasAbility("Long Reach") && !this._user.hasItem("Protective Pads")) {
                                 const target = this._raidState.raiders[this._targetID]; // All contact moves are single-target (?)

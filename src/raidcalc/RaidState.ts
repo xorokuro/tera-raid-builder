@@ -159,17 +159,6 @@ export class RaidState implements State.RaidState{
                     }
                 }
             }
-            /// Non-super effective items consumed after damage
-            if ( (!unnerve && pokemon.item === "Chilan Berry" && moveType === "Normal") ||
-                 (pokemon.item === "Absorb Bulb" && moveType === "Water") ||
-                 (pokemon.item === "Cell Battery" && moveType === "Electric") || 
-                 (pokemon.item === "Luminous Moss" && moveType === "Water") ||
-                 (pokemon.item === "Snowball" && moveType === "Ice") ||
-                 (pokemon.item === "Kee Berry" && moveCategory === "Physical" && !isSheerForceBoosted) ||
-                 (pokemon.item === "Maranga Berry" && moveCategory === "Special" && !isSheerForceBoosted)
-                ) {
-                this.consumeItem(id, pokemon.item, true, blockSymbiosis);
-            }
  
             /// abilities triggered by damage even if the target faints
             if (pokemon.hasAbility("Seed Sower")) {
@@ -180,6 +169,19 @@ export class RaidState implements State.RaidState{
 
             /// the rest can be skipped if the target faints
             if (fainted) { this.faint(id); return; }
+
+            /// Non-super effective items consumed after damage if the target survives
+            if ( (!unnerve && pokemon.item === "Chilan Berry" && moveType === "Normal") ||
+                 (pokemon.item === "Absorb Bulb" && moveType === "Water") ||
+                 (pokemon.item === "Cell Battery" && moveType === "Electric") || 
+                 (pokemon.item === "Luminous Moss" && moveType === "Water") ||
+                 (pokemon.item === "Snowball" && moveType === "Ice") ||
+                 (pokemon.item === "Kee Berry" && moveCategory === "Physical" && !isSheerForceBoosted) ||
+                 (pokemon.item === "Maranga Berry" && moveCategory === "Special" && !isSheerForceBoosted)
+                ) {
+                this.consumeItem(id, pokemon.item, true, blockSymbiosis);
+            }
+
             /// abilities triggered by damage if the target survives
             if (isCrit && pokemon.hasAbility("Anger Point")) { 
                 const boost = {atk: 12};
