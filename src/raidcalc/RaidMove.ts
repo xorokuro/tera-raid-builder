@@ -1127,8 +1127,27 @@ export class RaidMove {
                 if (this._user.hasAbility("Mega Launcher") && this.moveData.isPulse) {
                     healingPercent = (healingPercent || 0) * 1.5;
                 }
-                if (this.moveData.name === "Floral Healing" && this._user.field.hasTerrain("Grassy")) {
-                    healingPercent = 66.66; // Bulbapedia says 2/3, not sure what should be used here for perfect accuracy 
+                // TODO: moveData.healing is missing, healPercents are manually set even if default value of 50
+                switch(this.moveData.name) {  // Bulbapedia says 2/3, not sure what should be used here for perfect accuracy 
+                    case "Floral Healing":
+                        healingPercent = this._user.field.hasTerrain("Grassy") ? 66.66 : 50;
+                        break;
+                    case "Moonlight":
+                    case "Morning Sun":
+                    case "Synthesis":
+                        if (!this._user.field.weather || this._user.field.hasWeather("Strong Winds")) {
+                            healingPercent = 50;
+                        } else if (this._user.field.hasWeather("Sun") || this._user.field.hasWeather("Harsh Sunshine")) {
+                            healingPercent = 66.66;
+                        } else {
+                            healingPercent = 25;
+                        }
+                        break;
+                    case "Shore Up":
+                        healingPercent = this._user.field.hasWeather("Sand") ? 66.66 : 50;
+                        break;
+                    default:
+                        break;
                 }
                 const healAmount = Math.floor(target.maxHP() * (healingPercent || 0)/100 / ((target.bossMultiplier || 100) / 100));
                 this._healing[id] += healAmount;
