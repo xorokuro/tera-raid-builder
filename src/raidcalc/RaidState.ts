@@ -1021,7 +1021,10 @@ export class RaidState implements State.RaidState{
                 break;
             case "Hospitality":
                 if (id !== 0) {
-                    const allies = this.raiders.slice(1).splice(id-1, 1);
+                    const allies = [
+                        ...this.raiders.slice(1, id),
+                        ...this.raiders.slice(id + 1)
+                    ];
                     for (let ally of rankBySpeed(allies)) {
                         const healing = Math.floor(ally.maxHP() / 4);
                         this.applyDamage(ally.id, -healing)
