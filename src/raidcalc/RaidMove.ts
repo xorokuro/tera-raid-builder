@@ -11,6 +11,7 @@ import chargeMoves from "../data/charge_moves.json";
 import rechargeMoves from "../data/recharge_moves.json";
 import magicBounceMoves from "../data/magicbounce_moves.json";
 import thawUserMoves from "../data/thaw_user_moves.json";
+import { getModifiedStat } from "../calc/mechanics/util";
 
 export type RaidMoveResult= {
     state: RaidState;
@@ -1120,6 +1121,8 @@ export class RaidMove {
                     this._desc[id] = target.name + " " + target.name + " — " + this.move.name + " failed!";
                 }
                 this._healing[id] += target.stockpile === 3 ? maxHP : Math.floor(maxHP * 0.25 * target.stockpile);
+            } else if (this.move.name === "Strength Sap") {
+                this._raidState.applyDamage(this.userID, -getModifiedStat(target.stats.atk, target.boosts.atk, target.gen))
             } else {
                 if (this._user.hasAbility("Mega Launcher") && this.moveData.isPulse) {
                     healingPercent = (healingPercent || 0) * 1.5;
