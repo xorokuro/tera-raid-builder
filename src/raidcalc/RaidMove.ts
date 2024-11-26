@@ -1310,6 +1310,7 @@ export class RaidMove {
         // apply effects
         const sideFieldIDs = this.userID === 0 ? [0] : [1,2,3,4];
         for (let id of sideFieldIDs) {
+            const poke = this._raiders[id];
             const field = this._fields[id];
             field.attackerSide.isReflect = (reflect && !field.attackerSide.isReflect) ? (this._user.item === "Light Clay" ? 8 : 5) : field.attackerSide.isReflect;
             field.attackerSide.isLightScreen = (lightscreen && !field.attackerSide.isLightScreen) ? (this._user.item === "Light Clay" ? 8 : 5) : field.attackerSide.isLightScreen;
@@ -1317,8 +1318,10 @@ export class RaidMove {
             field.attackerSide.isMist = (mist && !field.attackerSide.isMist) ? 5 : field.attackerSide.isMist;
             field.attackerSide.isSafeguard = (safeguard && !field.attackerSide.isSafeguard) ? 5 : field.attackerSide.isSafeguard;
             field.attackerSide.isTailwind = (tailwind && !field.attackerSide.isTailwind) ? 5 : field.attackerSide.isTailwind;
+            // if (poke.originalCurHP > 0) {
             field.attackerSide.isAtkCheered = Math.min(6, (attackcheer ? 3 : 0) + field.attackerSide.isAtkCheered);
             field.attackerSide.isDefCheered = Math.min(6, (defensecheer ? 3 : 0) + field.attackerSide.isDefCheered);
+            // }
         }
 
         // Helping Hand
@@ -1433,6 +1436,7 @@ export class RaidMove {
                 this._desc[this._targetID] = "The Raid Boss nullified all stat boosts and abilities!"
                 for (let i=1; i<5; i++) {
                     const pokemon = this.getPokemon(i);
+                    if (pokemon.originalCurHP <= 0) { continue; }
                     // Helping Hand is NOT cleared
                     // if (
                     //     !persistentAbilities.unsuppressable.includes(pokemon.ability as AbilityName) 
@@ -1477,7 +1481,9 @@ export class RaidMove {
                 this._desc[0] = "The Raid Boss stole a Tera charge from its opponents!";
                 for (let i=1; i<5; i++) {
                     const pokemon = this._raidState.getPokemon(i);
-                    pokemon.teraCharge = Math.max(0, (pokemon.teraCharge || 0) - 1);
+                    if (pokemon.originalCurHP > 0) {
+                        pokemon.teraCharge = Math.max(0, (pokemon.teraCharge || 0) - 1);
+                    }
                 }
                 break;
             case "Activate Shield":
