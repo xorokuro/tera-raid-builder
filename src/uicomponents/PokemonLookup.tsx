@@ -234,7 +234,7 @@ function checkSpeciesForFilters(species: PokemonData, filters: SearchOption[], t
                 const validBinaryOperators = andOperators.concat(orOperators);
                 const validUnaryOperators = notOperators;
 
-                const validComparators = ["<", ">", "<=", ">=", "=", "==", "===", "!=", "!=="];
+                const validComparators = ["<", ">", "<=", ">=", "=", "==", "==="];
                 const validStats = ["hp", "atk", "def", "spa", "spd", "spe", "bst"];
 
                 const filterComponents = 
@@ -254,7 +254,7 @@ function checkSpeciesForFilters(species: PokemonData, filters: SearchOption[], t
                 for (let component of filterComponents) {
                     let lastOperator = operatorStack.slice(-1)[0];
                     if (validBinaryOperators.includes(component)) {
-                        while (operatorStack.length > 0 && validBinaryOperators.includes(lastOperator) && (operatorPrecedence[component as keyof typeof operatorPrecedence] <= operatorPrecedence[lastOperator as keyof typeof operatorPrecedence] || lastOperator === "(")) {
+                        while (operatorStack.length > 0 && (validBinaryOperators.includes(lastOperator) || validUnaryOperators.includes(lastOperator)) && (operatorPrecedence[component as keyof typeof operatorPrecedence] <= operatorPrecedence[lastOperator as keyof typeof operatorPrecedence] || lastOperator === "(")) {
                             // @ts-ignore
                             termStack.push(operatorStack.pop());
                             lastOperator = operatorStack.slice(-1)[0];
@@ -299,7 +299,7 @@ function checkSpeciesForFilters(species: PokemonData, filters: SearchOption[], t
                     } else {
                         let termMatched = false;
                         if (normalizeText(token) === normalizeText(getTranslation("nfe", translationKey)) && species.nfe) { termMatched = true;}
-                        const tokenComponents = token.split(/(<|>|<=|>=|=|==|===|!=|!==)/i).map((item) => item.trim()).filter(Boolean);
+                        const tokenComponents = token.split(/(===|==|<=|>=|<|>|=)/i).map((item) => item.trim()).filter(Boolean);
                         if (tokenComponents.length === 1) {
                             for (let move of species.moves) {
                                 if (normalizeText(token) === normalizeText(getTranslation(move.name, translationKey, "moves"))) {
@@ -329,7 +329,7 @@ function checkSpeciesForFilters(species: PokemonData, filters: SearchOption[], t
                             }
                             if (isNaN(value1)) {
                                 if (statID1 === "bst") {
-                                    value1 = ["hp","atk","def","spa","spd","spe"].map((stat) => (species.stats[stat as keyof StatsTable] || 0) + 1).reduce((total, current) => total + current, 0);
+                                    value1 = ["hp","atk","def","spa","spd","spe"].map((stat) => (species.stats[stat as keyof StatsTable] || 0)).reduce((total, current) => total + current, 0);
                                 } else {
                                     value1 = species.stats[statID1 as keyof StatsTable]!;
                                 }   
@@ -348,7 +348,7 @@ function checkSpeciesForFilters(species: PokemonData, filters: SearchOption[], t
                             }
                             if (isNaN(value2)) {
                                 if (statID2 === "bst") {
-                                    value2 = ["hp","atk","def","spa","spd","spe"].map((stat) => (species.stats[stat as keyof StatsTable] || 0) + 1).reduce((total, current) => total + current, 0);
+                                    value2 = ["hp","atk","def","spa","spd","spe"].map((stat) => (species.stats[stat as keyof StatsTable] || 0)).reduce((total, current) => total + current, 0);
                                 } else {
                                     value2 = species.stats[statID2 as keyof StatsTable]!;
                                 }   
@@ -372,10 +372,6 @@ function checkSpeciesForFilters(species: PokemonData, filters: SearchOption[], t
                                 case "===":
                                     termMatched = value1 === value2;
                                 break;
-                                case "!=":
-                                case "!==":
-                                    termMatched = value1 !== value2;
-                                break; 
                             }
 
                         }
