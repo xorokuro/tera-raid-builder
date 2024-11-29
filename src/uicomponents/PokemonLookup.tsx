@@ -218,17 +218,21 @@ function checkSpeciesForFilters(species: PokemonData, filters: SearchOption[], t
                     break;
                 }
                 const operatorPrecedence = {
+                    "!": 2,
                     "&&": 1,
                     "||": 0
                 };
                 const andTranslation = normalizeText(getTranslation("and", translationKey));
                 const orTranslation = normalizeText(getTranslation("or", translationKey));
+                const notTranslation = normalizeText(getTranslation("not", translationKey));
                 const andOperators = ["and", "&&", "&", ",", andTranslation];
                 const orOperators = ["or", "||", "|", orTranslation];
+                const notOperators = ["not", "!", "~", notTranslation];
 
-                const operatorRegExp = new RegExp(`(\\s${andTranslation}\\s|\\s${orTranslation}\\s|\\sand\\s|\\s\\s|\\sor\\s|&&|\\|\\||&|\\||,|\\(|\\))`, "i");
+                const operatorRegExp = new RegExp(`(\\s${andTranslation}\\s|\\s${orTranslation}\\s|\\b${notTranslation}\\b|\\sand\\s|\\s\\s|\\sor\\s|\\bnot\\b|&&|\\|\\||&|\\||,|!|~|\\(|\\))`, "i");
 
-                const validOperators = andOperators.concat(orOperators);
+                const validBinaryOperators = andOperators.concat(orOperators);
+                const validUnaryOperators = notOperators;
 
                 const validComparators = ["<", ">", "<=", ">=", "=", "==", "===", "!=", "!=="];
                 const validStats = ["hp", "atk", "def", "spa", "spd", "spe", "bst"];
@@ -240,19 +244,24 @@ function checkSpeciesForFilters(species: PokemonData, filters: SearchOption[], t
                     )
                     .map((item) => 
                         orOperators.includes(item) ? "||" : item
+                    )
+                    .map((item) =>
+                        notOperators.includes(item) ? "!" : item
                     );
                 const termStack: string[] = [];
                 const operatorStack: string[] = [];
                 
                 for (let component of filterComponents) {
                     let lastOperator = operatorStack.slice(-1)[0];
-                    if (validOperators.includes(component)) {
-                        while (operatorStack.length > 0 && validOperators.includes(lastOperator) && (operatorPrecedence[component as keyof typeof operatorPrecedence] <= operatorPrecedence[lastOperator as keyof typeof operatorPrecedence] || lastOperator === "(")) {
+                    if (validBinaryOperators.includes(component)) {
+                        while (operatorStack.length > 0 && validBinaryOperators.includes(lastOperator) && (operatorPrecedence[component as keyof typeof operatorPrecedence] <= operatorPrecedence[lastOperator as keyof typeof operatorPrecedence] || lastOperator === "(")) {
                             // @ts-ignore
                             termStack.push(operatorStack.pop());
                             lastOperator = operatorStack.slice(-1)[0];
                         }
                         operatorStack.push(component);
+                    } else if (validUnaryOperators.includes(component)) {
+                        operatorStack.push(component)
                     } else if (component === "(") {
                         operatorStack.push(component);
                     } else if (component === ")") {
@@ -273,7 +282,7 @@ function checkSpeciesForFilters(species: PokemonData, filters: SearchOption[], t
                 
                 const evaluatorStack: (string | boolean)[] = [];
                 termStack.forEach((token) => {
-                    if (validOperators.includes(token)) {
+                    if (validBinaryOperators.includes(token)) {
                         const operand2 = evaluatorStack.pop();
                         const operand1 = evaluatorStack.pop();
 
@@ -282,8 +291,12 @@ function checkSpeciesForFilters(species: PokemonData, filters: SearchOption[], t
                         } else if (token === "||") {
                             evaluatorStack.push(!!operand2 || !!operand1);
                         }
-                    }
-                    else {
+                    } else if (validUnaryOperators.includes(token)) {
+                        if (token === "!") {
+                            const operand = evaluatorStack.pop();
+                            evaluatorStack.push(!operand);
+                        }
+                    } else {
                         let termMatched = false;
                         if (normalizeText(token) === normalizeText(getTranslation("nfe", translationKey)) && species.nfe) { termMatched = true;}
                         const tokenComponents = token.split(/(<|>|<=|>=|=|==|===|!=|!==)/i).map((item) => item.trim()).filter(Boolean);
