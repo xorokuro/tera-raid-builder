@@ -301,23 +301,30 @@ function checkSpeciesForFilters(species: PokemonData, filters: SearchOption[], t
                         if (normalizeText(token) === normalizeText(getTranslation("nfe", translationKey)) && species.nfe) { termMatched = true;}
                         const tokenComponents = token.split(/(===|==|<=|>=|<|>|=)/i).map((item) => item.trim()).filter(Boolean);
                         if (tokenComponents.length === 1) {
-                            for (let move of species.moves) {
-                                if (normalizeText(token) === normalizeText(getTranslation(move.name, translationKey, "moves"))) {
-                                    termMatched = true;
-                                    break;
+                            const [searchToken, searchTokenSelector] = normalizeText(token).match(/^([^:._]*)(?:[:._](.*))?$/)?.slice(1) || [normalizeText(token), null];
+                            if ((!searchTokenSelector || searchTokenSelector === "move") && !(searchToken == "psychic" && !searchTokenSelector)) {
+                                for (let move of species.moves) {
+                                    if (searchToken === normalizeText(getTranslation(move.name, translationKey, "moves"))) {
+                                        termMatched = true;
+                                        break;
+                                    }
                                 }
                             }
-                            for (let ability of species.abilities) {
-                                if (normalizeText(token) === normalizeText(getTranslation(ability.name, translationKey, "abilities"))) {
-                                    termMatched = true;
-                                    break;
+                            if (!searchTokenSelector || searchTokenSelector === "ability") {
+                                for (let ability of species.abilities) {
+                                    if (searchToken === normalizeText(getTranslation(ability.name, translationKey, "abilities"))) {
+                                        termMatched = true;
+                                        break;
+                                    }
                                 }
                             }
-                            for (let type of species.types) {
-                                const uppercaseType = type[0].toUpperCase() + type.slice(1) as TypeName; // data in the assets branch needs to be fixed
-                                if (normalizeText(token) === normalizeText(getTranslation(uppercaseType, translationKey, "types"))) {
-                                    termMatched = true;
-                                    break;
+                            if (!searchTokenSelector || searchTokenSelector === "type") {
+                                for (let type of species.types) {
+                                    const uppercaseType = type[0].toUpperCase() + type.slice(1) as TypeName; // data in the assets branch needs to be fixed
+                                    if (searchToken === normalizeText(getTranslation(uppercaseType, translationKey, "types"))) {
+                                        termMatched = true;
+                                        break;
+                                    }
                                 }
                             }
                         } else if (tokenComponents.length === 3) {
@@ -1416,6 +1423,14 @@ function PokemonLookup({loadSet, allSpecies, allMoves, setAllSpecies, setAllMove
                                                 <Stack direction="column" paddingLeft="20px" margin="5px 0px">
                                                     <Typography>{`${getTranslation("Or Operator",translationKey)}:`}</Typography>
                                                     <FilterGenericTag text={`${getTranslation("Fake Tears",translationKey,"moves")} ${getTranslation("or",translationKey)} ${getTranslation("Acid Spray",translationKey,"moves")}`} />
+                                                </Stack>
+                                                <Stack direction="column" paddingLeft="20px" margin="5px 0px">
+                                                    <Typography>{`${getTranslation("Not Operator",translationKey)}:`}</Typography>
+                                                    <FilterGenericTag text={`${getTranslation("not",translationKey)} ${getTranslation("BST",translationKey)} < 400`} />
+                                                </Stack>
+                                                <Stack direction="column" paddingLeft="20px" margin="5px 0px">
+                                                    <Typography>{`${getTranslation("Tag",translationKey)}:`}</Typography>
+                                                    <FilterGenericTag text={`${getTranslation("Psychic",translationKey,"types")}:${getTranslation("move",translationKey)}`} />
                                                 </Stack>
                                             </Box>
                                             <Box padding="10px 0px">
