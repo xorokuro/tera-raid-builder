@@ -39,15 +39,16 @@
             "bossMultiplier": 3500,
             "extraMoves": [
                 "Dragon Ascent",
-                "Draco Meteor"
+                "Draco Meteor",
+                "Dragon Dance"
             ],
             "shieldData": {
                 "hpTrigger": 80,
                 "timeTrigger": 75,
                 "shieldCancelDamage": 30,
                 "shieldDamageRate": 20,
-                "shieldDamageRateTera": 70,
-                "shieldDamageRateTeraChange": 30
+                "shieldDamageRateTera": 80,
+                "shieldDamageRateTeraChange": 40
             }
         },
         {
