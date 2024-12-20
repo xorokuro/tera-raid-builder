@@ -5,12 +5,12 @@
     "pokemon": [
         {
             "id": 0,
-            "role": "Torterra",
-            "name": "Torterra",
-            "shiny": false,
+            "role": "Rayquaza",
+            "name": "Rayquaza",
+            "shiny": true,
             "isAnyLevel": false,
-            "ability": "Shell Armor",
-            "nature": "Brave",
+            "ability": "Air Lock",
+            "nature": "Naughty",
             "evs": {
                 "hp": 0,
                 "atk": 0,
@@ -27,24 +27,24 @@
                 "spd": 31,
                 "spe": 31
             },
-            "level": 100,
-            "gender": "M",
-            "teraType": "Ground",
+            "level": 75,
+            "gender": "N",
+            "teraType": "Dragon",
             "moves": [
+                "Dragon Pulse",
+                "Hurricane",
                 "Earthquake",
-                "Wood Hammer",
-                "Smack Down",
-                "Earth Power"
+                "Extreme Speed"
             ],
             "bossMultiplier": 3500,
             "extraMoves": [
-                "Shell Smash",
-                "Earthquake"
+                "Dragon Ascent",
+                "Draco Meteor"
             ],
             "shieldData": {
-                "hpTrigger": 75,
+                "hpTrigger": 80,
                 "timeTrigger": 75,
-                "shieldCancelDamage": 40,
+                "shieldCancelDamage": 30,
                 "shieldDamageRate": 20,
                 "shieldDamageRateTera": 70,
                 "shieldDamageRateTeraChange": 30
@@ -52,46 +52,41 @@
         },
         {
             "id": 1,
-            "role": "Kyogre",
-            "name": "Kyogre",
+            "role": "NPC",
+            "name": "NPC",
             "shiny": false,
-            "isAnyLevel": false,
-            "ability": "Drizzle",
-            "item": "Mirror Herb",
-            "nature": "Modest",
+            "isAnyLevel": true,
+            "ability": "(No Ability)",
+            "nature": "Hardy",
             "evs": {
                 "hp": 0,
                 "atk": 0,
                 "def": 0,
-                "spa": 252,
+                "spa": 0,
                 "spd": 0,
                 "spe": 0
             },
             "ivs": {
-                "hp": 31,
-                "atk": 31,
-                "def": 31,
-                "spa": 31,
-                "spd": 31,
-                "spe": 31
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
             },
-            "level": 100,
+            "level": 1,
             "gender": "N",
-            "moves": [
-                "Water Spout",
-                "Protect"
-            ],
+            "moves": [],
             "bossMultiplier": 100,
             "extraMoves": []
         },
         {
             "id": 2,
-            "role": "Stonjourner",
-            "name": "Stonjourner",
+            "role": "NPC",
+            "name": "NPC",
             "shiny": false,
             "isAnyLevel": true,
-            "ability": "Power Spot",
-            "item": "Focus Sash",
+            "ability": "(No Ability)",
             "nature": "Hardy",
             "evs": {
                 "hp": 0,
@@ -117,11 +112,11 @@
         },
         {
             "id": 3,
-            "role": "Bonsly",
-            "name": "Bonsly",
+            "role": "NPC",
+            "name": "NPC",
             "shiny": false,
             "isAnyLevel": true,
-            "ability": "Sturdy",
+            "ability": "(No Ability)",
             "nature": "Hardy",
             "evs": {
                 "hp": 0,
@@ -141,19 +136,17 @@
             },
             "level": 1,
             "gender": "N",
-            "moves": [
-                "Fake Tears"
-            ],
+            "moves": [],
             "bossMultiplier": 100,
             "extraMoves": []
         },
         {
             "id": 4,
-            "role": "Bonsly",
-            "name": "Bonsly",
+            "role": "NPC",
+            "name": "NPC",
             "shiny": false,
             "isAnyLevel": true,
-            "ability": "Sturdy",
+            "ability": "(No Ability)",
             "nature": "Hardy",
             "evs": {
                 "hp": 0,
@@ -173,9 +166,7 @@
             },
             "level": 1,
             "gender": "N",
-            "moves": [
-                "Fake Tears"
-            ],
+            "moves": [],
             "bossMultiplier": 100,
             "extraMoves": []
         }
@@ -197,7 +188,7 @@
                 }
             },
             "bossMoveInfo": {
-                "name": "Shell Smash",
+                "name": "Dragon Ascent",
                 "userID": 0,
                 "targetID": 1,
                 "options": {
@@ -211,34 +202,6 @@
         },
         {
             "id": 1,
-            "group": 0,
-            "moveInfo": {
-                "name": "(No Move)",
-                "userID": 1,
-                "targetID": 1,
-                "options": {
-                    "crit": false,
-                    "secondaryEffects": false,
-                    "roll": "avg",
-                    "allowMiss": false,
-                    "hits": 1
-                }
-            },
-            "bossMoveInfo": {
-                "name": "Remove Negative Effects",
-                "userID": 0,
-                "targetID": 1,
-                "options": {
-                    "crit": false,
-                    "secondaryEffects": false,
-                    "roll": "avg",
-                    "allowMiss": false,
-                    "hits": 1
-                }
-            }
-        },
-        {
-            "id": 2,
             "group": 1,
             "moveInfo": {
                 "name": "(No Move)",
@@ -268,11 +231,10 @@
     ],
     "groups": [
         [
-            0,
-            1
+            0
         ],
         [
-            2
+            1
         ]
     ],
     "repeats": [
