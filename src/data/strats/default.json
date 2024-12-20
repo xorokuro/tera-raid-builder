@@ -52,12 +52,13 @@
         },
         {
             "id": 1,
-            "role": "NPC",
-            "name": "NPC",
+            "role": "Miraidon",
+            "name": "Miraidon",
             "shiny": false,
-            "isAnyLevel": true,
-            "ability": "(No Ability)",
-            "nature": "Hardy",
+            "isAnyLevel": false,
+            "ability": "Hadron Engine",
+            "item": "Choice Specs",
+            "nature": "Modest",
             "evs": {
                 "hp": 0,
                 "atk": 0,
@@ -67,108 +68,160 @@
                 "spe": 0
             },
             "ivs": {
-                "hp": 0,
-                "atk": 0,
-                "def": 0,
-                "spa": 0,
-                "spd": 0,
-                "spe": 0
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
             },
-            "level": 1,
+            "level": 100,
             "gender": "N",
-            "moves": [],
+            "moves": [
+                "Dragon Pulse"
+            ],
             "bossMultiplier": 100,
-            "extraMoves": []
+            "extraMoves": [],
+            "shieldData": {
+                "hpTrigger": 0,
+                "timeTrigger": 0,
+                "shieldCancelDamage": 0,
+                "shieldDamageRate": 0,
+                "shieldDamageRateTera": 0,
+                "shieldDamageRateTeraChange": 0
+            }
         },
         {
             "id": 2,
-            "role": "NPC",
-            "name": "NPC",
+            "role": "Alcremie",
+            "name": "Alcremie",
             "shiny": false,
-            "isAnyLevel": true,
-            "ability": "(No Ability)",
-            "nature": "Hardy",
+            "isAnyLevel": false,
+            "ability": "Sweet Veil",
+            "item": "Covert Cloak",
+            "nature": "Bold",
             "evs": {
-                "hp": 0,
+                "hp": 252,
                 "atk": 0,
-                "def": 0,
+                "def": 252,
                 "spa": 0,
                 "spd": 0,
                 "spe": 0
             },
             "ivs": {
-                "hp": 0,
-                "atk": 0,
-                "def": 0,
-                "spa": 0,
-                "spd": 0,
-                "spe": 0
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
             },
-            "level": 1,
-            "gender": "N",
-            "moves": [],
+            "level": 100,
+            "gender": "F",
+            "moves": [
+                "Decorate",
+                "Helping Hand",
+                "Fake Tears",
+                "Misty Terrain"
+            ],
             "bossMultiplier": 100,
-            "extraMoves": []
+            "extraMoves": [],
+            "shieldData": {
+                "hpTrigger": 0,
+                "timeTrigger": 0,
+                "shieldCancelDamage": 0,
+                "shieldDamageRate": 0,
+                "shieldDamageRateTera": 0,
+                "shieldDamageRateTeraChange": 0
+            }
         },
         {
             "id": 3,
-            "role": "NPC",
-            "name": "NPC",
+            "role": "Maushold",
+            "name": "Maushold",
             "shiny": false,
-            "isAnyLevel": true,
-            "ability": "(No Ability)",
-            "nature": "Hardy",
+            "isAnyLevel": false,
+            "ability": "Friend Guard",
+            "item": "Sitrus Berry",
+            "nature": "Calm",
             "evs": {
-                "hp": 0,
+                "hp": 252,
                 "atk": 0,
                 "def": 0,
                 "spa": 0,
-                "spd": 0,
+                "spd": 252,
                 "spe": 0
             },
             "ivs": {
-                "hp": 0,
-                "atk": 0,
-                "def": 0,
-                "spa": 0,
-                "spd": 0,
-                "spe": 0
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
             },
-            "level": 1,
+            "level": 100,
             "gender": "N",
-            "moves": [],
+            "moves": [
+                "Fake Tears",
+                "Helping Hand",
+                "Mud-Slap",
+                "Chilling Water"
+            ],
             "bossMultiplier": 100,
-            "extraMoves": []
+            "extraMoves": [],
+            "shieldData": {
+                "hpTrigger": 0,
+                "timeTrigger": 0,
+                "shieldCancelDamage": 0,
+                "shieldDamageRate": 0,
+                "shieldDamageRateTera": 0,
+                "shieldDamageRateTeraChange": 0
+            }
         },
         {
             "id": 4,
-            "role": "NPC",
-            "name": "NPC",
+            "role": "Maushold",
+            "name": "Maushold",
             "shiny": false,
-            "isAnyLevel": true,
-            "ability": "(No Ability)",
-            "nature": "Hardy",
+            "isAnyLevel": false,
+            "ability": "Friend Guard",
+            "item": "Sitrus Berry",
+            "nature": "Calm",
             "evs": {
-                "hp": 0,
+                "hp": 252,
                 "atk": 0,
                 "def": 0,
                 "spa": 0,
-                "spd": 0,
+                "spd": 252,
                 "spe": 0
             },
             "ivs": {
-                "hp": 0,
-                "atk": 0,
-                "def": 0,
-                "spa": 0,
-                "spd": 0,
-                "spe": 0
+                "hp": 31,
+                "atk": 31,
+                "def": 31,
+                "spa": 31,
+                "spd": 31,
+                "spe": 31
             },
-            "level": 1,
+            "level": 100,
             "gender": "N",
-            "moves": [],
+            "moves": [
+                "Fake Tears",
+                "Helping Hand",
+                "Mud-Slap",
+                "Chilling Water"
+            ],
             "bossMultiplier": 100,
-            "extraMoves": []
+            "extraMoves": [],
+            "shieldData": {
+                "hpTrigger": 0,
+                "timeTrigger": 0,
+                "shieldCancelDamage": 0,
+                "shieldDamageRate": 0,
+                "shieldDamageRateTera": 0,
+                "shieldDamageRateTeraChange": 0
+            }
         }
     ],
     "turns": [
